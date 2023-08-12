@@ -56,6 +56,9 @@ local cmp_mappings = lsp.defaults.cmp_mappings({
 });
 
 lsp.setup_nvim_cmp({
+  -- See issues here: https://www.reddit.com/r/neovim/comments/1139ngo/how_to_make_nvimcmp_menu_selection_start_at_the/
+  completion = { completeopt = "noselect" },
+  preselect = cmp.PreselectMode.None,
   mapping = cmp_mappings
 })
 
