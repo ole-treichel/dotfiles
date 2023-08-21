@@ -42,3 +42,15 @@ vim.keymap.set("i", "<Down>", "<Nop>")
 -- to clear hightlights
 vim.keymap.set("n", "<leader>nh", ":nohl<CR>")
 
+-- fix netrw blocking <C-l> to move to right split
+vim.api.nvim_create_autocmd('filetype', {
+  pattern = 'netrw',
+  desc = 'Better mappings for netrw',
+  callback = function()
+    local bind = function(lhs, rhs)
+      vim.keymap.set('n', lhs, rhs, {remap = true, buffer = true})
+    end
+
+    bind("<C-l>", ":TmuxNavigateRight<cr>")
+  end
+})
