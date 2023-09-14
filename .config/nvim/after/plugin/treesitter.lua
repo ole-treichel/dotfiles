@@ -19,6 +19,7 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
     -- https://github.com/windwp/nvim-ts-autotag/issues/125#issuecomment-1655438951
     enable_close_on_slash = false,
+    filetypes = { "html" , "templ", 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'tsx', 'jsx', 'rescript' },
   },
 
   highlight = {
@@ -31,3 +32,19 @@ require'nvim-treesitter.configs'.setup {
     additional_vim_regex_highlighting = false,
   },
 }
+
+local treesitter_parser_config = require "nvim-treesitter.parsers".get_parser_configs()
+treesitter_parser_config.templ = {
+  install_info = {
+    url = "https://github.com/vrischmann/tree-sitter-templ.git",
+    files = {"src/parser.c", "src/scanner.c"},
+    branch = "master",
+  },
+}
+
+vim.treesitter.language.register('templ', 'templ')
+
+vim.api.nvim_create_autocmd("BufWinEnter", {
+        pattern = "*.templ",
+        command = "set filetype=templ",
+})
