@@ -24,6 +24,7 @@ return require('packer').startup(function(use)
   use ({'techtuner/aura-neovim', config = function ()
 	  vim.cmd('colorscheme aura')
   end})
+
   use {
 	  'VonHeikemen/lsp-zero.nvim',
 	  branch = 'v2.x',
@@ -53,6 +54,5 @@ return require('packer').startup(function(use)
   })
 
   use("christoomey/vim-tmux-navigator") -- tmux & split window navigation
-  use "fatih/vim-go"
 end)
 

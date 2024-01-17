@@ -3,13 +3,15 @@ local lsp = require("lsp-zero")
 lsp.preset("recommended")
 
 lsp.ensure_installed({
+  'gopls',
+  'html',
+  'templ',
   'tsserver',
   'rust_analyzer',
 })
 
 -- Fix Undefined global 'vim'
 lsp.nvim_workspace()
-
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
@@ -62,8 +64,6 @@ lsp.setup_nvim_cmp({
   mapping = cmp_mappings
 })
 
-
-
 lsp.set_preferences({
     suggest_lsp_servers = false,
     sign_icons = {
@@ -87,3 +87,8 @@ vim.diagnostic.config({
     virtual_text = true
 })
 
+vim.filetype.add({ extension = { templ = "templ" } })
+vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
+require('lspconfig').html.setup({
+    filetypes = { "html", "templ" },
+})
