@@ -54,3 +54,11 @@ vim.api.nvim_create_autocmd('filetype', {
     bind("<C-l>", ":TmuxNavigateRight<cr>")
   end
 })
+
+-- prevent overwriting clipboard when pasting
+vim.keymap.set("v", "d", '"_d"')
+vim.keymap.set("v", "dd", '"_dd"')
+vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
+vim.keymap.set("n", "d", '"_d"')
+vim.keymap.set("n", "dd", '"_dd"')
+vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
