@@ -19,7 +19,7 @@ require'nvim-treesitter.configs'.setup {
     enable = true,
     -- https://github.com/windwp/nvim-ts-autotag/issues/125#issuecomment-1655438951
     enable_close_on_slash = false,
-    filetypes = { "html" , "templ", 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'tsx', 'jsx', 'rescript' },
+    filetypes = { "html" , 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'tsx', 'jsx', 'rescript' },
   },
 
   highlight = {
