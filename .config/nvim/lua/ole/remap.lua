@@ -63,3 +63,7 @@ vim.keymap.set("n", "d", '"_d"')
 vim.keymap.set("n", "diw", '"_diw"')
 vim.keymap.set("n", "dd", '"_dd"')
 vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
+
+-- show hightlight for search but clear when hitting escape
+vim.opt.hlsearch = true
+vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
