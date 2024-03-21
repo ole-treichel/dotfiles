@@ -69,5 +69,8 @@ vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
 -- wrap word in qoutes
-vim.keymap.set('n', 'Q', 'ciw"<Esc>pa"<Esc>')
-vim.keymap.set('n', 'q', "ciw'<Esc>pa'<Esc>")
+vim.keymap.set('n', '"', 'ciw"<Esc>pa"<Esc>')
+vim.keymap.set('n', "'", "ciw'<Esc>pa'<Esc>")
+
+-- wrap word in parantheses
+vim.keymap.set('n', '(', 'ciw(<Esc>pa)<Esc>')
