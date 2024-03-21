@@ -68,3 +68,6 @@ vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
 vim.opt.hlsearch = true
 vim.keymap.set('n', '<Esc>', '<cmd>nohlsearch<CR>')
 
+-- wrap word in qoutes
+vim.keymap.set('n', 'Q', 'ciw"<Esc>pa"<Esc>')
+vim.keymap.set('n', 'q', "ciw'<Esc>pa'<Esc>")
