@@ -74,3 +74,4 @@ vim.keymap.set('n', "'", "ciw'<Esc>pa'<Esc>")
 
 -- wrap word in parantheses
 vim.keymap.set('n', '(', 'ciw(<Esc>pa)<Esc>')
+vim.keymap.set('n', '"', 'ciw"<Esc>pa"<Esc>')
