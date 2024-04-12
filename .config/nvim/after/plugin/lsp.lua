@@ -15,6 +15,7 @@ lsp.nvim_workspace()
 
 local cmp = require('cmp')
 local cmp_select = {behavior = cmp.SelectBehavior.Select}
+local lspconfig = require('lspconfig')
 
 local has_words_before = function()
   unpack = unpack or table.unpack
@@ -81,14 +82,15 @@ lsp.on_attach(function(client, bufnr)
   vim.keymap.set("n", "<leader>ca", function() vim.lsp.buf.code_action() end, opts)
 end)
 
+lspconfig.html.setup({
+    filetypes = { "html", "templ" },
+})
+
+vim.filetype.add({ extension = { templ = "templ" } })
+
 lsp.setup()
 
 vim.diagnostic.config({
     virtual_text = true
 })
 
-vim.filetype.add({ extension = { templ = "templ" } })
-vim.api.nvim_create_autocmd({ "BufWritePre" }, { pattern = { "*.templ" }, callback = vim.lsp.buf.format })
-require('lspconfig').html.setup({
-    filetypes = { "html", "templ" },
-})
