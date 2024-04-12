@@ -1,6 +1,0 @@
-require("ole.remap")
-require("ole.packer")
-require("ole.set")
-require("ole.autoclose")
-require("ole.statusline")
-require("ole.comment")

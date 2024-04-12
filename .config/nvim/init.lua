@@ -1,2 +1,2 @@
-require("ole")
+require("config")
 
