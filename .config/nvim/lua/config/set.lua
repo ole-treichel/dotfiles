@@ -5,6 +5,7 @@ vim.opt.expandtab = true
 
 vim.opt.nu = true
 vim.opt.relativenumber = true
+vim.opt.signcolumn = "yes:1"
 
 vim.opt.wrap = false
 
