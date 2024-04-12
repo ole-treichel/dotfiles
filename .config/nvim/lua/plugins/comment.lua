@@ -1,5 +1,5 @@
 return {
-  "",
+  "numToStr/Comment.nvim",
 
   config = function()
     -- Taken from here: https://github.com/RyanzpLee/dotfiles/blob/main/nvim/lua/user/plugins/comment.lua
