@@ -1,6 +1,4 @@
 require("config.lazy")
 require("config.remap")
 require("config.set")
-require("config.autoclose")
 require("config.statusline")
-require("config.comment")
