@@ -20,13 +20,6 @@ return {
         additional_vim_regex_highlighting = { "tsx" },
       },
 
-      autotag = {
-        enable = true,
-        -- https://github.com/windwp/nvim-ts-autotag/issues/125#issuecomment-1655438951
-        enable_close_on_slash = false,
-        filetypes = { "html" , 'javascript', 'typescript', 'javascriptreact', 'typescriptreact', 'tsx', 'jsx', 'rescript' },
-      },
-
       highlight = {
         enable = true,
 
