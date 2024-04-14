@@ -1,19 +1,17 @@
 return {
-  "neovim/nvim-lspconfig",
-
+  'neovim/nvim-lspconfig',
 
   config = function()
     -- Setup language servers.
-    local lspconfig = require('lspconfig')
+    local lspconfig = require 'lspconfig'
 
     lspconfig.tsserver.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
     lspconfig.html.setup {
-      filetypes = { "html", "templ" },
+      filetypes = { 'html', 'templ' },
     }
-    lspconfig.gopls.setup{}
-
+    lspconfig.gopls.setup {}
 
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer
@@ -45,6 +43,5 @@ return {
         end, opts)
       end,
     })
-  end
+  end,
 }
-

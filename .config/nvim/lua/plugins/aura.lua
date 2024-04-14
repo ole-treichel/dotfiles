@@ -1,7 +1,7 @@
 return {
-  "techtuner/aura-neovim",
+  'techtuner/aura-neovim',
 
   config = function()
-	  vim.cmd('colorscheme aura')
-  end
+    vim.cmd 'colorscheme aura'
+  end,
 }

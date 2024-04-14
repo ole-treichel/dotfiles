@@ -1,24 +1,24 @@
 return {
-  "hrsh7th/nvim-cmp",
+  'hrsh7th/nvim-cmp',
 
   dependencies = {
-    "neovim/nvim-lspconfig",
+    'neovim/nvim-lspconfig',
 
-    "hrsh7th/cmp-nvim-lsp",
-    "L3MON4D3/LuaSnip"
+    'hrsh7th/cmp-nvim-lsp',
+    'L3MON4D3/LuaSnip',
   },
 
   config = function()
-    local cmp = require("cmp")
-    local luasnip = require("luasnip")
+    local cmp = require 'cmp'
+    local luasnip = require 'luasnip'
 
-    cmp.setup({
+    cmp.setup {
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
-        end
+        end,
       },
-      mapping = cmp.mapping.preset.insert({
+      mapping = cmp.mapping.preset.insert {
         ['<C-b>'] = cmp.mapping.scroll_docs(-4),
         ['<C-f>'] = cmp.mapping.scroll_docs(4),
         ['<C-Space>'] = cmp.mapping.complete(),
@@ -32,16 +32,16 @@ return {
             if luasnip.expandable() then
               luasnip.expand()
             else
-              cmp.confirm({
+              cmp.confirm {
                 select = true,
-              })
+              }
             end
           else
             fallback()
           end
         end),
 
-        ["<Tab>"] = cmp.mapping(function(fallback)
+        ['<Tab>'] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_next_item()
           elseif luasnip.locally_jumpable(1) then
@@ -49,9 +49,9 @@ return {
           else
             fallback()
           end
-        end, { "i", "s" }),
+        end, { 'i', 's' }),
 
-        ["<S-Tab>"] = cmp.mapping(function(fallback)
+        ['<S-Tab>'] = cmp.mapping(function(fallback)
           if cmp.visible() then
             cmp.select_prev_item()
           elseif luasnip.locally_jumpable(-1) then
@@ -59,15 +59,14 @@ return {
           else
             fallback()
           end
-        end, { "i", "s" }),
-
-      }),
+        end, { 'i', 's' }),
+      },
       sources = cmp.config.sources({
         { name = 'nvim_lsp' },
-        { name = 'luasnip' }, 
+        { name = 'luasnip' },
       }, {
         { name = 'buffer' },
-      })
-    })
-  end
+      }),
+    }
+  end,
 }
