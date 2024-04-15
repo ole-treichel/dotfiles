@@ -1,6 +1,10 @@
 return {
   'numToStr/Comment.nvim',
 
+  dependencies = {
+    'JoosepAlviste/nvim-ts-context-commentstring',
+  },
+
   config = function()
     -- Taken from here: https://github.com/RyanzpLee/dotfiles/blob/main/nvim/lua/user/plugins/comment.lua
     require('Comment').setup {
