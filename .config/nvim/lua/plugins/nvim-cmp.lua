@@ -6,11 +6,14 @@ return {
 
     'hrsh7th/cmp-nvim-lsp',
     'L3MON4D3/LuaSnip',
+
+    'onsails/lspkind.nvim',
   },
 
   config = function()
     local cmp = require 'cmp'
     local luasnip = require 'luasnip'
+    local lspkind = require 'lspkind'
 
     cmp.setup {
       snippet = {
@@ -67,6 +70,12 @@ return {
       }, {
         { name = 'buffer' },
       }),
+      formatting = {
+        format = lspkind.cmp_format({
+          mode = 'symbol',
+          maxwidth = 50,
+        })
+      }
     }
   end,
 }
