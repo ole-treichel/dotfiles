@@ -16,6 +16,10 @@ return {
     local lspkind = require 'lspkind'
 
     cmp.setup {
+      completion = {
+        completeopt =  'menu,menuone,noinsert,noselect',
+      },
+      preselect = cmp.PreselectMode.None,
       snippet = {
         expand = function(args)
           luasnip.lsp_expand(args.body)
@@ -75,7 +79,7 @@ return {
           mode = 'symbol',
           maxwidth = 50,
         })
-      }
+      },
     }
   end,
 }
