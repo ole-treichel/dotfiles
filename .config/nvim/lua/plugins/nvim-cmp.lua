@@ -17,7 +17,7 @@ return {
 
     cmp.setup {
       completion = {
-        completeopt =  'menu,menuone,noinsert,noselect',
+        completeopt = 'menu,menuone,noinsert,noselect',
       },
       preselect = cmp.PreselectMode.None,
       snippet = {
@@ -75,10 +75,10 @@ return {
         { name = 'buffer' },
       }),
       formatting = {
-        format = lspkind.cmp_format({
+        format = lspkind.cmp_format {
           mode = 'symbol',
           maxwidth = 50,
-        })
+        },
       },
     }
   end,

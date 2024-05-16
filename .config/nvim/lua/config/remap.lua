@@ -1,5 +1,4 @@
 vim.g.mapleader = ' '
-vim.keymap.set('n', '<leader>ls', vim.cmd.Ex)
 
 -- moving line(s) with "J" / "K"
 vim.keymap.set('v', 'K', ':m \'>-2<CR>gv=gv')
