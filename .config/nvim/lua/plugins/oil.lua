@@ -6,6 +6,13 @@ return {
 
   config = function()
     require('oil').setup {
+      use_default_keymaps = false,
+
+      keymaps = {
+        ["<CR>"] = "actions.select",
+        ["-"] = "actions.parent",
+      },
+
       view_options = {
         show_hidden = true,
       },
