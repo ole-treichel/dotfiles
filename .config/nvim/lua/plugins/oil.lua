@@ -8,9 +8,12 @@ return {
     require('oil').setup {
       use_default_keymaps = false,
 
+      experimental_watch_for_changes = false,
+
       keymaps = {
-        ["<CR>"] = "actions.select",
-        ["-"] = "actions.parent",
+        ['<CR>'] = 'actions.select',
+        ['-'] = 'actions.parent',
+        ['<C-r>'] = 'actions.refresh',
       },
 
       view_options = {
