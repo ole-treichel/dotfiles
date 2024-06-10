@@ -9,12 +9,15 @@ return {
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
     lspconfig.tailwindcss.setup({
-      filetypes = { "templ", "javascript", "typescript", "react" },
+      filetypes = { "templ", "javascript", "react" },
       init_options = { userLanguages = { templ = "html" } },
     })
     lspconfig.html.setup {
       filetypes = { 'html', 'templ' },
     }
+    lspconfig.htmx.setup({
+      filetypes = { "javascript", "react", "html", "templ" },
+    })
     lspconfig.gopls.setup {}
 
     vim.api.nvim_create_autocmd("BufWritePre", {
