@@ -8,6 +8,10 @@ return {
     lspconfig.tsserver.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
+    lspconfig.tailwindcss.setup({
+      filetypes = { "templ", "javascript", "typescript", "react" },
+      init_options = { userLanguages = { templ = "html" } },
+    })
     lspconfig.html.setup {
       filetypes = { 'html', 'templ' },
     }
