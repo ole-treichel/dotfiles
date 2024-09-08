@@ -11,7 +11,7 @@ return {
           name: (node_identifier) @_attr_name
           value: (rust_expression (string_literal (string_content) @injection.content))
         )
-        (#match? @_attr_name "(^(x-data|x-init|x-for|x-if|x-effect|x-show)$|(^x-on:|^x-bind:|^x-text:))")
+        (#match? @_attr_name "(^(x-data|x-init|x-for|x-if|x-effect|x-show|x-text)$|(^x-on:|^x-bind:))")
         (#set! injection.include-children)
         (#set! injection.combined)
         (#set! injection.language "javascript")
