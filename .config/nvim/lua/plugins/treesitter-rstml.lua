@@ -26,5 +26,7 @@ return {
         client.server_capabilities.semanticTokensProvider = nil
       end,
     })
+
+    vim.g.vim_treesitter_highlight_timeout = 5000  -- 5 seconds
   end,
 }
