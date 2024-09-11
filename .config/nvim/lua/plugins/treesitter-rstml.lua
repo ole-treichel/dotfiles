@@ -18,14 +18,9 @@ return {
       )
     ]])
 
-    -- rust analyzers semantic tokens overwrite the injections highlighting. this disables semantic tokens entirely
-    vim.api.nvim_create_autocmd('LspAttach', {
-      group = vim.api.nvim_create_augroup('UserLspConfig', {}),
-      callback = function(ev)
-        local client = vim.lsp.get_client_by_id(ev.data.client_id)
-        client.server_capabilities.semanticTokensProvider = nil
-      end,
-    })
+    -- semantic tokens seem to override tree sitter in general. by setting to lower than 100, tree sitter is not overriden by the lsp
+    -- https://github.com/NvChad/NvChad/issues/1907#issuecomment-1501269595
+    vim.highlight.priorities.semantic_tokens = 95
 
     vim.g.vim_treesitter_highlight_timeout = 5000  -- 5 seconds
   end,
