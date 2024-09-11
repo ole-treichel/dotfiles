@@ -5,7 +5,7 @@ return {
     -- Setup language servers.
     local lspconfig = require 'lspconfig'
 
-    lspconfig.tsserver.setup {}
+    lspconfig.ts_ls.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
     lspconfig.html.setup {}
