@@ -1,0 +1,5 @@
+default_session = "workspace"
+
+[[search_dirs]]
+path = "/home/ole/workspace"
+depth = 3
