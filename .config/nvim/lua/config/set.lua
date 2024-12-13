@@ -22,5 +22,6 @@ vim.opt.backupcopy = 'yes'
 vim.filetype.add {
   extension = {
     templ = 'templ',
+    mjml = 'html'
   },
 }
