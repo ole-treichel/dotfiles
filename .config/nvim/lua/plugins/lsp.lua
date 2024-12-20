@@ -10,8 +10,8 @@ return {
     lspconfig.ts_ls.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
-    lspconfig.html.setup({
-      filetypes = { "html", "go" },
+    lspconfig.html.setup {
+      filetypes = { 'html', 'go' },
       capabilities = capabilities,
       init_options = {
         provideFormatter = true,
@@ -27,7 +27,7 @@ return {
           },
         },
       },
-    })
+    }
     lspconfig.gopls.setup {}
 
     vim.api.nvim_create_autocmd('BufWritePre', {
