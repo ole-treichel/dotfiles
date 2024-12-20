@@ -30,7 +30,10 @@ return {
     }
     lspconfig.gopls.setup {}
 
-    vim.api.nvim_create_autocmd('BufWritePre', {
+    --
+    -- as long as go format fucks up multiline strings so badly I will keep this disabled.
+    --
+    --[[ vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
       callback = function()
         local params = vim.lsp.util.make_range_params()
@@ -51,7 +54,7 @@ return {
         end
         vim.lsp.buf.format { async = false }
       end,
-    })
+    }) ]]
 
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer
