@@ -30,5 +30,21 @@ return {
         additional_vim_regex_highlighting = false,
       },
     }
+
+    vim.treesitter.query.set(
+      'go',
+      'injections',
+      [[
+      ((const_spec
+        (comment) @_html_comment
+        value: (expression_list
+          (raw_string_literal
+            (raw_string_literal_content) @injection.content)))
+        (#eq? @_html_comment "/* html */")
+        (#set! injection.combined true)
+        (#set! injection.language "html"))
+
+      ]]
+    )
   end,
 }

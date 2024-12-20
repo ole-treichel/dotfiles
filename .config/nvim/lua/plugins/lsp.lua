@@ -4,11 +4,30 @@ return {
   config = function()
     -- Setup language servers.
     local lspconfig = require 'lspconfig'
+    local capabilities = require('cmp_nvim_lsp').default_capabilities()
+    capabilities.textDocument.completion.completionItem.snippetSupport = true
 
     lspconfig.ts_ls.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
-    lspconfig.html.setup {}
+    lspconfig.html.setup({
+      filetypes = { "html", "go" },
+      capabilities = capabilities,
+      init_options = {
+        provideFormatter = true,
+        embeddedLanguages = {
+          html = true,
+        },
+      },
+      settings = {
+        html = {
+          validate = true,
+          format = {
+            enable = true,
+          },
+        },
+      },
+    })
     lspconfig.gopls.setup {}
 
     vim.api.nvim_create_autocmd('BufWritePre', {
