@@ -10,30 +10,10 @@ return {
     lspconfig.ts_ls.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
-    lspconfig.html.setup {
-      filetypes = { 'html', 'go' },
-      capabilities = capabilities,
-      init_options = {
-        provideFormatter = true,
-        embeddedLanguages = {
-          html = true,
-        },
-      },
-      settings = {
-        html = {
-          validate = true,
-          format = {
-            enable = true,
-          },
-        },
-      },
-    }
+    lspconfig.html.setup {}
     lspconfig.gopls.setup {}
 
-    --
-    -- as long as go format fucks up multiline strings so badly I will keep this disabled.
-    --
-    --[[ vim.api.nvim_create_autocmd('BufWritePre', {
+    vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
       callback = function()
         local params = vim.lsp.util.make_range_params()
@@ -54,7 +34,7 @@ return {
         end
         vim.lsp.buf.format { async = false }
       end,
-    }) ]]
+    })
 
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer
