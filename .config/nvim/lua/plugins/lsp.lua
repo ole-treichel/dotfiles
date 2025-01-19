@@ -12,6 +12,7 @@ return {
     lspconfig.templ.setup {}
     lspconfig.html.setup {}
     lspconfig.gopls.setup {}
+    lspconfig.ocamllsp.setup {}
 
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',

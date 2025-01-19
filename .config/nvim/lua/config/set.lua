@@ -23,5 +23,6 @@ vim.filetype.add {
   extension = {
     templ = 'templ',
     mjml = 'html',
+    re = 'reason'
   },
 }
