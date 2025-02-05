@@ -26,3 +26,4 @@ vim.filetype.add {
     re = 'reason'
   },
 }
+-- vim.diagnostic.config({virtual_lines=true})

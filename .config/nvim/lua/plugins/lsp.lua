@@ -10,7 +10,17 @@ return {
     lspconfig.ts_ls.setup {}
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
-    lspconfig.html.setup {}
+    lspconfig.html.setup {
+      filetypes = {
+        "rust",
+        "javascript",
+        "javascriptreact",
+        "javascript.jsx",
+        "typescript",
+        "typescriptreact",
+        "typescript.tsx"
+      }
+    }
     lspconfig.gopls.setup {}
     lspconfig.ocamllsp.setup {}
 

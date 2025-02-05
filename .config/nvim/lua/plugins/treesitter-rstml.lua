@@ -19,6 +19,22 @@ return {
         (#set! injection.combined)
         (#set! injection.language "javascript")
       )
+      (
+        (element_node
+          open_tag: (open_tag
+            name: (node_identifier) @_tag_name (#eq? @_tag_name "script"))
+          (raw_string_literal (string_content) @injection.content)
+        )
+        (#set! injection.language "javascript")
+      )
+      (
+        (element_node
+          open_tag: (open_tag
+            name: (node_identifier) @_tag_name (#eq? @_tag_name "style"))
+          (raw_string_literal (string_content) @injection.content)
+        )
+        (#set! injection.language "css")
+      )
     ]]
     )
 
