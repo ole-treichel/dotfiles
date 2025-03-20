@@ -12,7 +12,6 @@ return {
     lspconfig.templ.setup {}
     lspconfig.html.setup {
       filetypes = {
-        "rust",
         "javascript",
         "javascriptreact",
         "javascript.jsx",

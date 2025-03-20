@@ -26,4 +26,15 @@ vim.filetype.add {
     re = 'reason'
   },
 }
--- vim.diagnostic.config({virtual_lines=true})
+
+vim.diagnostic.config{
+  virtual_lines = true,
+}
+
+--[[ vim.diagnostic.config{
+  virtual_text = {
+    virt_text_pos = 'eol_right_align',
+  },
+} ]]
+
+--[[ vim.diagnostic.config({ virtual_text = false }) ]]
