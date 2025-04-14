@@ -14,3 +14,9 @@ format = "[⬡ $version](bold green)"
 
 [battery]
 disabled = true
+
+[directory]
+truncation_length = 1
+
+[package]
+disabled = true
