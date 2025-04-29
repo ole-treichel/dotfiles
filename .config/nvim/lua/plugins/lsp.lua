@@ -89,5 +89,32 @@ return {
         end
     end
 
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      pattern = { '*.ts', '*.tsx', '*.js', '*.jsx', '*.json' },
+      callback = function(args)
+        -- Check if we're in a Deno project (has deno.json or deno.jsonc)
+        local file_dir = vim.fn.expand('%:p:h')
+        local is_deno_project = false
+        local check_dir = file_dir
+        while check_dir ~= '/' do
+          if vim.fn.filereadable(check_dir .. '/deno.json') == 1 or 
+             vim.fn.filereadable(check_dir .. '/deno.jsonc') == 1 then
+            is_deno_project = true
+            break
+          end
+          check_dir = vim.fn.fnamemodify(check_dir, ':h')
+        end
+        if is_deno_project then
+          -- Use LSP formatting for Deno files
+          vim.lsp.buf.format({ 
+            async = false,
+            filter = function(client)
+              return client.name == "denols"
+            end
+          })
+        end
+      end,
+    })
+
   end,
 }
