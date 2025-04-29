@@ -4,10 +4,24 @@ return {
   config = function()
     -- Setup language servers.
     local lspconfig = require 'lspconfig'
+    local util = lspconfig.util
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     capabilities.textDocument.completion.completionItem.snippetSupport = true
 
-    lspconfig.ts_ls.setup {}
+    lspconfig.ts_ls.setup {
+      root_dir = util.root_pattern("package.json"), -- Node.js projects only
+      single_file_support = false,
+    }
+
+    lspconfig.denols.setup {
+      root_dir = util.root_pattern("deno.json", "deno.jsonc"),
+      init_options = {
+        lint = true,
+        unstable = true,
+      },
+      single_file_support = false,
+    }
+
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
     lspconfig.html.setup {
@@ -21,7 +35,6 @@ return {
       }
     }
     lspconfig.gopls.setup {}
-    lspconfig.ocamllsp.setup {}
 
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
