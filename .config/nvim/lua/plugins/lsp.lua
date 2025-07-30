@@ -8,8 +8,17 @@ return {
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+
     lspconfig.ts_ls.setup {
-      root_dir = util.root_pattern("package.json"), -- Node.js projects only
+      root_dir = function(fname)
+        local util = require('lspconfig.util')
+        -- Don't attach if this is a Deno project
+        if util.root_pattern("deno.json", "deno.jsonc")(fname) then
+          return nil
+        end
+        -- Only attach for Node.js projects
+        return util.root_pattern("package.json")(fname)
+      end,
       single_file_support = false,
     }
 
