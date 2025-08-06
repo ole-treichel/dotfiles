@@ -74,3 +74,8 @@ vim.keymap.set('n', '\'', 'ciw\'<Esc>pa\'<Esc>')
 -- wrap word in parantheses
 vim.keymap.set('n', '(', 'ciw(<Esc>pa)<Esc>')
 vim.keymap.set('n', '"', 'ciw"<Esc>pa"<Esc>')
+
+-- diagnostics
+vim.keymap.set('n', '<leader>dt', '<cmd>lua vim.diagnostic.enable(not vim.diagnostic.is_enabled())<cr>', { desc = 'Toggle diagnostics' })
+vim.keymap.set('n', '<leader>dd', '<cmd>lua vim.diagnostic.enable(false)<cr>', { desc = 'Disable diagnostics' })
+vim.keymap.set('n', '<leader>de', '<cmd>lua vim.diagnostic.enable(true)<cr>', { desc = 'Enable diagnostics' })
