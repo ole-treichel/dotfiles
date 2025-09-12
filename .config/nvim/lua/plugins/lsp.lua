@@ -125,5 +125,32 @@ return {
       end,
     })
 
+    --[[ -- Override the LSP floating preview function to add padding
+    local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
+    function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
+      opts = opts or {}
+      opts.border = opts.border or 'rounded'
+
+      -- Add padding by wrapping content with empty lines and spaces
+      if contents and type(contents) == 'table' then
+        local padded_contents = {}
+
+        -- Add top padding
+        table.insert(padded_contents, '')
+
+        -- Add side padding to each line
+        for _, line in ipairs(contents) do
+          table.insert(padded_contents, '  ' .. line .. '  ')
+        end
+
+        -- Add bottom padding
+        table.insert(padded_contents, '')
+
+        contents = padded_contents
+      end
+
+      return orig_util_open_floating_preview(contents, syntax, opts, ...)
+    end ]]
+
   end,
 }
