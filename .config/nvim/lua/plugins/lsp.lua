@@ -31,6 +31,12 @@ return {
       single_file_support = false,
     }
 
+    vim.lsp.config('cssls', {
+      capabilities = capabilities,
+    })
+
+    vim.lsp.enable('cssls')
+
     lspconfig.rust_analyzer.setup {}
     lspconfig.templ.setup {}
     lspconfig.html.setup {
