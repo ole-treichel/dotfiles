@@ -51,6 +51,11 @@ return {
     }
     lspconfig.gopls.setup {}
 
+    vim.lsp.config('jsonls', {
+      capabilities = capabilities
+    })
+    vim.lsp.enable('jsonls')
+
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
       callback = function()
