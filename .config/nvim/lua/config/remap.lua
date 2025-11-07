@@ -79,3 +79,32 @@ vim.keymap.set('n', '"', 'ciw"<Esc>pa"<Esc>')
 vim.keymap.set('n', '<leader>dt', '<cmd>lua vim.diagnostic.enable(not vim.diagnostic.is_enabled())<cr>', { desc = 'Toggle diagnostics' })
 vim.keymap.set('n', '<leader>dd', '<cmd>lua vim.diagnostic.enable(false)<cr>', { desc = 'Disable diagnostics' })
 vim.keymap.set('n', '<leader>de', '<cmd>lua vim.diagnostic.enable(true)<cr>', { desc = 'Enable diagnostics' })
+
+-- prettier format command
+vim.api.nvim_create_user_command('PrettierFormat', function()
+  local current_file = vim.api.nvim_buf_get_name(0)
+  if current_file == '' then
+    vim.notify('No file to format', vim.log.levels.WARN)
+    return
+  end
+
+  local cmd = { 'npx', 'prettier', current_file, '--write' }
+
+  vim.system(cmd, {
+    cwd = vim.fn.getcwd(),
+    text = true,
+  }, function(result)
+    vim.schedule(function()
+      if result.code == 0 then
+        vim.cmd('checktime')
+        vim.notify('File formatted with Prettier', vim.log.levels.INFO)
+      else
+        local error_msg = result.stderr and result.stderr ~= '' and result.stderr or 'Prettier formatting failed'
+        vim.notify('Prettier error: ' .. error_msg, vim.log.levels.ERROR)
+      end
+    end)
+  end)
+end, { desc = 'Format current buffer with Prettier' })
+
+-- prettier format keymap
+vim.keymap.set('n', '<leader>fp', ':PrettierFormat<CR>', { desc = 'Format with Prettier' })
