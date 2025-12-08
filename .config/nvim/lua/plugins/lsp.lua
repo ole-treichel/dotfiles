@@ -46,7 +46,8 @@ return {
         "javascript.jsx",
         "typescript",
         "typescriptreact",
-        "typescript.tsx"
+        "typescript.tsx",
+        "rust"
       }
     }
     lspconfig.gopls.setup {}
