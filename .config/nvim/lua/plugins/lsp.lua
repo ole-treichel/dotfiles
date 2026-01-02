@@ -96,6 +96,7 @@ return {
         vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', 'grr', vim.lsp.buf.references)
         vim.keymap.set('n', 'grn', vim.lsp.buf.rename)
+        vim.keymap.set({ 'i', 'n' }, '<C-k>', function() require('cmp').complete() end, opts)
       end,
     })
 
