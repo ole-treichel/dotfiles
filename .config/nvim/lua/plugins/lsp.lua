@@ -2,44 +2,35 @@ return {
   'neovim/nvim-lspconfig',
 
   config = function()
-    -- Setup language servers.
-    local lspconfig = require 'lspconfig'
-    local util = lspconfig.util
     local capabilities = require('cmp_nvim_lsp').default_capabilities()
     capabilities.textDocument.completion.completionItem.snippetSupport = true
 
+    -- Set default capabilities for all servers
+    vim.lsp.config('*', {
+      capabilities = capabilities,
+    })
 
-    lspconfig.ts_ls.setup {
-      root_dir = function(fname)
-        local util = require('lspconfig.util')
-        -- Don't attach if this is a Deno project
-        if util.root_pattern("deno.json", "deno.jsonc")(fname) then
-          return nil
+    -- TypeScript (only for Node.js projects, not Deno)
+    vim.lsp.config('ts_ls', {
+      root_dir = function(bufnr, on_dir)
+        if vim.fs.root(bufnr, { 'deno.json', 'deno.jsonc' }) then
+          return
         end
-        -- Only attach for Node.js projects
-        return util.root_pattern("package.json")(fname)
+        on_dir(vim.fs.root(bufnr, { 'package.json' }))
       end,
-      single_file_support = false,
-    }
+    })
 
-    lspconfig.denols.setup {
-      root_dir = util.root_pattern("deno.json", "deno.jsonc"),
+    -- Deno
+    vim.lsp.config('denols', {
+      root_markers = { 'deno.json', 'deno.jsonc' },
       init_options = {
         lint = true,
         unstable = true,
       },
-      single_file_support = false,
-    }
-
-    vim.lsp.config('cssls', {
-      capabilities = capabilities,
     })
 
-    vim.lsp.enable('cssls')
-
-    lspconfig.rust_analyzer.setup {}
-    lspconfig.templ.setup {}
-    lspconfig.html.setup {
+    -- HTML (with extended filetypes)
+    vim.lsp.config('html', {
       filetypes = {
         "javascript",
         "javascriptreact",
@@ -47,15 +38,21 @@ return {
         "typescript",
         "typescriptreact",
         "typescript.tsx",
-        "rust"
-      }
-    }
-    lspconfig.gopls.setup {}
-
-    vim.lsp.config('jsonls', {
-      capabilities = capabilities
+        "rust",
+      },
     })
-    vim.lsp.enable('jsonls')
+
+    -- Enable all servers
+    vim.lsp.enable({
+      'ts_ls',
+      'denols',
+      'cssls',
+      'rust_analyzer',
+      'templ',
+      'html',
+      'gopls',
+      'jsonls',
+    })
 
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
@@ -119,7 +116,7 @@ return {
         local is_deno_project = false
         local check_dir = file_dir
         while check_dir ~= '/' do
-          if vim.fn.filereadable(check_dir .. '/deno.json') == 1 or 
+          if vim.fn.filereadable(check_dir .. '/deno.json') == 1 or
              vim.fn.filereadable(check_dir .. '/deno.jsonc') == 1 then
             is_deno_project = true
             break
@@ -128,7 +125,7 @@ return {
         end
         if is_deno_project then
           -- Use LSP formatting for Deno files
-          vim.lsp.buf.format({ 
+          vim.lsp.buf.format({
             async = false,
             filter = function(client)
               return client.name == "denols"
@@ -137,33 +134,5 @@ return {
         end
       end,
     })
-
-    --[[ -- Override the LSP floating preview function to add padding
-    local orig_util_open_floating_preview = vim.lsp.util.open_floating_preview
-    function vim.lsp.util.open_floating_preview(contents, syntax, opts, ...)
-      opts = opts or {}
-      opts.border = opts.border or 'rounded'
-
-      -- Add padding by wrapping content with empty lines and spaces
-      if contents and type(contents) == 'table' then
-        local padded_contents = {}
-
-        -- Add top padding
-        table.insert(padded_contents, '')
-
-        -- Add side padding to each line
-        for _, line in ipairs(contents) do
-          table.insert(padded_contents, '  ' .. line .. '  ')
-        end
-
-        -- Add bottom padding
-        table.insert(padded_contents, '')
-
-        contents = padded_contents
-      end
-
-      return orig_util_open_floating_preview(contents, syntax, opts, ...)
-    end ]]
-
   end,
 }
