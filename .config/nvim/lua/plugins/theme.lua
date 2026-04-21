@@ -43,6 +43,7 @@ return {
   config = function()
     require("everforest").setup({
       -- Your config here
+      background = "soft"
     })
 
     vim.cmd([[colorscheme everforest]])
