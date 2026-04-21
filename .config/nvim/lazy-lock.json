@@ -1,9 +1,9 @@
 {
   "Comment.nvim": { "branch": "master", "commit": "e30b7f2008e52442154b66f7c519bfd2f1e32acb" },
   "LuaSnip": { "branch": "master", "commit": "a62e1083a3cfe8b6b206e7d3d33a51091df25357" },
-  "catppuccin": { "branch": "main", "commit": "426dbebe06b5c69fd846ceb17b42e12f890aedf1" },
   "cmp-nvim-lsp": { "branch": "main", "commit": "cbc7b02bb99fae35cb42f514762b89b5126651ef" },
   "copilot.vim": { "branch": "release", "commit": "a12fd5672110c8aa7e3c8419e28c96943ca179be" },
+  "everforest-nvim": { "branch": "main", "commit": "d235ca0aa6a29546e661a020e2618612acbbffbe" },
   "fff.nvim": { "branch": "main", "commit": "464f9d8b858cf49c9d30dd7554c81a6c10aaf9df" },
   "lazy.nvim": { "branch": "main", "commit": "306a05526ada86a7b30af95c5cc81ffba93fef97" },
   "lspkind.nvim": { "branch": "master", "commit": "c7274c48137396526b59d86232eabcdc7fed8a32" },
