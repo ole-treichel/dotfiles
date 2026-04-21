@@ -52,7 +52,9 @@ return {
       'html',
       'gopls',
       'jsonls',
+      'shopify_theme_ls'
     })
+
 
     vim.api.nvim_create_autocmd('BufWritePre', {
       pattern = '*.go',
