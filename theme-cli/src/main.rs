@@ -11,7 +11,7 @@ use surfaces::{Mode, SurfaceReport};
 #[derive(Parser)]
 #[command(
     name = "theme",
-    about = "Switch system-wide light/dark mode across GNOME, Neovim, tmux, GNOME Terminal, and Chrome.",
+    about = "Switch system-wide light/dark mode across GNOME, Neovim, tmux, and GNOME Terminal.",
     version
 )]
 struct Cli {
@@ -68,7 +68,6 @@ fn main() -> ExitCode {
         surfaces::nvim::apply(target, &cfg),
         surfaces::tmux::apply(target, &cfg),
         surfaces::gnome_terminal::apply(target, &cfg),
-        surfaces::chrome::apply(target, &cfg),
     ];
 
     let mut any_err = false;

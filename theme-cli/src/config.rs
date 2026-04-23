@@ -9,7 +9,6 @@ pub struct Config {
     pub repo_path: PathBuf,
     pub gtk: Gtk,
     pub gnome_terminal: GnomeTerminal,
-    pub chrome: Chrome,
 }
 
 #[derive(Debug, Deserialize)]
@@ -21,12 +20,6 @@ pub struct Gtk {
 #[derive(Debug, Deserialize)]
 pub struct GnomeTerminal {
     pub profile_uuid: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct Chrome {
-    pub dark_extension_id: String,
-    pub light_extension_id: String,
 }
 
 impl Config {
@@ -46,7 +39,6 @@ impl Config {
                 return Ok(user);
             }
         }
-        // Fall back to the config.toml committed in the crate.
         let crate_cfg = PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("config.toml");
         Ok(crate_cfg)
     }
