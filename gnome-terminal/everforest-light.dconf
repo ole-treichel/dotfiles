@@ -1,0 +1,9 @@
+[/]
+background-color='rgb(253,246,227)'
+font='Source Code Pro 9'
+foreground-color='rgb(92,106,114)'
+palette=['rgb(112,128,137)', 'rgb(248,85,82)', 'rgb(141,161,1)', 'rgb(223,160,0)', 'rgb(58,148,197)', 'rgb(223,105,186)', 'rgb(53,167,124)', 'rgb(92,106,114)', 'rgb(112,128,137)', 'rgb(248,85,82)', 'rgb(141,161,1)', 'rgb(223,160,0)', 'rgb(58,148,197)', 'rgb(223,105,186)', 'rgb(53,167,124)', 'rgb(92,106,114)']
+scrollbar-policy='never'
+use-system-font=false
+use-theme-colors=false
+visible-name='Everforest Light Medium'
