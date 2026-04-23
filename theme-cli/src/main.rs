@@ -69,6 +69,7 @@ fn main() -> ExitCode {
         surfaces::tmux::apply(target, &cfg),
         surfaces::gnome_terminal::apply(target, &cfg),
         surfaces::apps::apply(target, &cfg),
+        surfaces::chrome::apply(target, &cfg),
     ];
 
     let mut any_err = false;

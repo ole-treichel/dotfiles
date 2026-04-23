@@ -1,4 +1,5 @@
 pub mod apps;
+pub mod chrome;
 pub mod gnome_terminal;
 pub mod nvim;
 pub mod system;

@@ -9,3 +9,10 @@ repo_path = "/home/ole/workspace/dotfiles"
 # GTK theme names as shown in gnome-tweaks. These must be installed.
 light = "Everforest-Light"
 dark  = "Everforest-Dark"
+
+[chrome]
+# Flatpak app ID for the Chromium variant to theme.
+# Leave empty ("") to disable Chrome handling.
+# The CLI kills and relaunches this flatpak with --load-extension
+# pointing at chrome/everforest-{light,dark}/ whenever you switch modes.
+flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"

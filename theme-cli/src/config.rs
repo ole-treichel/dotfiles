@@ -8,12 +8,18 @@ use serde::Deserialize;
 pub struct Config {
     pub repo_path: PathBuf,
     pub gtk: Gtk,
+    pub chrome: Chrome,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Gtk {
     pub light: String,
     pub dark: String,
+}
+
+#[derive(Debug, Deserialize)]
+pub struct Chrome {
+    pub flatpak_app_id: String,
 }
 
 impl Config {
