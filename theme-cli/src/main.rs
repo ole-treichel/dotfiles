@@ -11,7 +11,7 @@ use surfaces::{Mode, SurfaceReport};
 #[derive(Parser)]
 #[command(
     name = "theme",
-    about = "Switch system-wide light/dark mode across GNOME, Neovim, tmux, and GNOME Terminal.",
+    about = "Switch system-wide light/dark mode across system, Neovim, tmux, and terminal.",
     version
 )]
 struct Cli {
@@ -63,14 +63,21 @@ fn main() -> ExitCode {
         }
     };
 
-    let reports: Vec<SurfaceReport> = vec![
-        surfaces::system::apply(target, &cfg),
-        surfaces::nvim::apply(target, &cfg),
-        surfaces::tmux::apply(target, &cfg),
-        surfaces::gnome_terminal::apply(target, &cfg),
-        surfaces::apps::apply(target, &cfg),
-        surfaces::chrome::apply(target, &cfg),
-    ];
+    let mut reports: Vec<SurfaceReport> = Vec::new();
+    reports.push(surfaces::system::apply(target, &cfg));
+    reports.push(surfaces::nvim::apply(target, &cfg));
+    reports.push(surfaces::tmux::apply(target, &cfg));
+
+    #[cfg(target_os = "linux")]
+    {
+        reports.push(surfaces::gnome_terminal::apply(target, &cfg));
+        reports.push(surfaces::apps::apply(target, &cfg));
+    }
+
+    #[cfg(target_os = "macos")]
+    reports.push(surfaces::ghostty::apply(target, &cfg));
+
+    reports.push(surfaces::chrome::apply(target, &cfg));
 
     let mut any_err = false;
     for r in &reports {

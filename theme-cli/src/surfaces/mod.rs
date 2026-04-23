@@ -1,6 +1,10 @@
+#[cfg(target_os = "linux")]
 pub mod apps;
 pub mod chrome;
+#[cfg(target_os = "linux")]
 pub mod gnome_terminal;
+#[cfg(target_os = "macos")]
+pub mod ghostty;
 pub mod nvim;
 pub mod system;
 pub mod tmux;
@@ -26,7 +30,7 @@ impl Mode {
         }
     }
 
-    /// gsettings color-scheme value.
+    #[cfg(target_os = "linux")]
     pub fn color_scheme(self) -> &'static str {
         match self {
             Mode::Light => "prefer-light",

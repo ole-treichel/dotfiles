@@ -1,18 +1,29 @@
 # theme-cli configuration
-# Loaded from $XDG_CONFIG_HOME/theme-cli/config.toml, falling back to this file
-# (resolved relative to the crate root).
+# Loaded from $XDG_CONFIG_HOME/theme-cli/config.toml (Linux) or
+# ~/Library/Application Support/theme-cli/config.toml (macOS),
+# falling back to this file (resolved relative to the crate root).
+#
+# This file is the Linux default. For macOS, create a config at the
+# platform-specific path above.
 
 # Absolute path to this dotfiles repo. Used to locate vendored theme assets.
 repo_path = "/home/ole/workspace/dotfiles"
 
+# --- Linux-only -----------------------------------------------------------
 [gtk]
 # GTK theme names as shown in gnome-tweaks. These must be installed.
 light = "Everforest-Light"
 dark  = "Everforest-Dark"
 
 [chrome]
-# Flatpak app ID for the Chromium variant to theme.
-# Leave empty ("") to disable Chrome handling.
-# The CLI kills and relaunches this flatpak with --load-extension
-# pointing at chrome/everforest-{light,dark}/ whenever you switch modes.
+# Linux: Flatpak app ID. Leave empty ("") to disable.
 flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
+# macOS: app name for `open -a`. Leave empty ("") to disable.
+# app_name = "Chromium"
+
+# --- macOS-only ------------------------------------------------------------
+[ghostty]
+# Theme names as shown by `ghostty +list-themes`.
+light = "Everforest Light Med"
+dark  = "Everforest Dark Med"
+# config_path = ""  # auto-detected if empty

@@ -35,19 +35,42 @@ fn push_to_running(mode: Mode) -> Result<usize> {
 }
 
 fn find_sockets() -> Result<Vec<std::path::PathBuf>> {
-    let mut roots = Vec::new();
-    if let Some(rt) = std::env::var_os("XDG_RUNTIME_DIR") {
-        roots.push(std::path::PathBuf::from(rt));
-    }
-    roots.push(std::path::PathBuf::from("/tmp"));
-
     let mut found = Vec::new();
-    for root in roots {
-        let pattern = root.join("nvim.*.0");
-        let pat = pattern.to_string_lossy().to_string();
-        for entry in glob(&pat).with_context(|| format!("glob {pat}"))?.flatten() {
+
+    #[cfg(target_os = "linux")]
+    {
+        let mut roots = Vec::new();
+        if let Some(rt) = std::env::var_os("XDG_RUNTIME_DIR") {
+            roots.push(std::path::PathBuf::from(rt));
+        }
+        roots.push(std::path::PathBuf::from("/tmp"));
+
+        for root in roots {
+            let pattern = root.join("nvim.*.0");
+            let pat = pattern.to_string_lossy().to_string();
+            for entry in glob(&pat).with_context(|| format!("glob {pat}"))?.flatten() {
+                found.push(entry);
+            }
+        }
+    }
+
+    #[cfg(target_os = "macos")]
+    {
+        // macOS nvim sockets: $TMPDIR/nvim.<user>/<hash>/nvim.<pid>.0
+        if let Some(tmpdir) = std::env::var_os("TMPDIR") {
+            let pattern = std::path::PathBuf::from(tmpdir)
+                .join("nvim.*/*/nvim.*.0");
+            let pat = pattern.to_string_lossy().to_string();
+            for entry in glob(&pat).with_context(|| format!("glob {pat}"))?.flatten() {
+                found.push(entry);
+            }
+        }
+        // Also check /tmp as fallback
+        let pat = "/tmp/nvim.*/*/nvim.*.0";
+        for entry in glob(pat).with_context(|| format!("glob {pat}"))?.flatten() {
             found.push(entry);
         }
     }
+
     Ok(found)
 }
