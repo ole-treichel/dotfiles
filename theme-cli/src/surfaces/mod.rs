@@ -1,3 +1,4 @@
+pub mod apps;
 pub mod gnome_terminal;
 pub mod nvim;
 pub mod system;

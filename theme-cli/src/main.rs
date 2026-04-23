@@ -68,6 +68,7 @@ fn main() -> ExitCode {
         surfaces::nvim::apply(target, &cfg),
         surfaces::tmux::apply(target, &cfg),
         surfaces::gnome_terminal::apply(target, &cfg),
+        surfaces::apps::apply(target, &cfg),
     ];
 
     let mut any_err = false;
