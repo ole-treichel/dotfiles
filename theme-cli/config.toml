@@ -1,0 +1,23 @@
+# theme-cli configuration
+# Loaded from $XDG_CONFIG_HOME/theme-cli/config.toml, falling back to this file
+# (resolved relative to the crate root).
+
+# Absolute path to this dotfiles repo. Used to locate vendored theme assets.
+repo_path = "/home/ole/workspace/dotfiles"
+
+[gtk]
+# GTK theme names as shown in gnome-tweaks. These must be installed.
+light = "Everforest-Light-Medium"
+dark  = "Everforest-Dark-Medium"
+
+[gnome_terminal]
+# UUID of the GNOME Terminal profile that should receive Everforest colors.
+# Find it with: dconf list /org/gnome/terminal/legacy/profiles:/
+# See gnome-terminal/README.md for setup.
+profile_uuid = ""
+
+[chrome]
+# Extension IDs of the two unpacked Everforest themes.
+# See chrome/README.md for setup.
+dark_extension_id  = ""
+light_extension_id = ""

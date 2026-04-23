@@ -1,52 +1,26 @@
---[[ return {
-  'ole-treichel/poimandres.nvim',
-  lazy = false,
-  priority = 1000,
-  config = function()
-    require('poimandres').setup {
-      -- leave this setup function empty for default config
-      -- or refer to the configuration section
-      -- for configuration options
-      dim_nc_background = false, -- dim 'non-current' window backgrounds
-      disable_background = false, -- disable background
-    }
-  end,
-
-  -- optionally set the colorscheme within lazy config
-  init = function()
-    vim.cmd("colorscheme poimandres")
-  end
-}
-]]
-
---[[ return {
-  "catppuccin/nvim", name = "catppuccin", priority = 1000,
-  config = function()
-    require("catppuccin").setup({
-      custom_highlights = function()
-        return {
-          ["@tag.attribute"] = { style = {} },
-        }
-      end,
-    })
-    vim.cmd("colorscheme catppuccin-frappe")
-  end
-}
-]]
+-- Follow the system color-scheme (org.gnome.desktop.interface color-scheme).
+-- The `theme` CLI sets this value; the ColorScheme autocmd from everforest
+-- handles live reloads when `:set background=light|dark` is pushed via
+-- `nvim --server ... --remote-send`.
+local function system_background()
+  local ok, handle = pcall(io.popen, "gsettings get org.gnome.desktop.interface color-scheme 2>/dev/null")
+  if not ok or not handle then return "dark" end
+  local out = handle:read("*a") or ""
+  handle:close()
+  if out:find("prefer%-light") then return "light" end
+  return "dark"
+end
 
 return {
   "neanias/everforest-nvim",
   version = false,
   lazy = false,
-  priority = 1000, -- make sure to load this before all the other start plugins
-  -- Optional; default configuration will be used if setup isn't called.
+  priority = 1000,
   config = function()
+    vim.opt.background = system_background()
     require("everforest").setup({
-      -- Your config here
-      background = "soft"
+      background = "soft",
     })
-
     vim.cmd([[colorscheme everforest]])
   end,
 }
-
