@@ -1,4 +1,5 @@
 .DS_Store
 node_modules
 # packer_compiled.lua
+Cached Theme.pak
 
