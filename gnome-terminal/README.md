@@ -1,27 +1,26 @@
 # Everforest for GNOME Terminal
 
-Both variants load into a single profile UUID so switching swaps colors in place.
+Two dconf files, one per mode. The `theme` CLI creates the profile on first run
+and loads the matching colors on each invocation — no manual setup in the
+terminal preferences needed (useful, since recent GNOME Terminal removed most
+of the profile UI).
 
-## First-time setup
+## What the CLI does on first run
 
-1. In GNOME Terminal → Preferences, create a new profile named "Everforest" and set it as default.
-2. Find its UUID:
+1. Registers a profile with a fixed UUID
+   (`3b1a4e2f-8c7d-4b9e-a1f2-c3d4e5f6a7b8`) in
+   `/org/gnome/terminal/legacy/profiles:/list`.
+2. Names it `Everforest` and sets it as the default profile.
+3. Loads the dark or light dconf file into that profile's subpath.
 
-   ```
-   dconf list /org/gnome/terminal/legacy/profiles:/
-   ```
+Subsequent runs just reload the colors.
 
-3. Put that UUID into `theme-cli/config.toml` under `[gnome_terminal] profile_uuid`.
-
-## Manual load
+## Manual load (if you ever need it)
 
 ```
-UUID=<your-profile-uuid>
+UUID=3b1a4e2f-8c7d-4b9e-a1f2-c3d4e5f6a7b8
 dconf load /org/gnome/terminal/legacy/profiles:/:$UUID/ < everforest-dark.dconf
-dconf load /org/gnome/terminal/legacy/profiles:/:$UUID/ < everforest-light.dconf
 ```
-
-The `theme` CLI automates this — you only use these commands if you're bootstrapping.
 
 ## Source
 

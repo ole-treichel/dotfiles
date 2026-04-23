@@ -18,10 +18,11 @@ ln -sf "$PWD/target/release/theme" ~/.local/bin/theme
 
 ## One-time setup
 
-Edit `config.toml` (or copy to `~/.config/theme-cli/config.toml` for a user-local override) and fill in:
+Edit `config.toml` (or copy to `~/.config/theme-cli/config.toml` for a user-local override):
 
-- `[gnome_terminal] profile_uuid` — see `gnome-terminal/README.md`
-- `[gtk] light` / `dark` — GTK theme names shown in gnome-tweaks (defaults: `Everforest-Light-Medium` / `Everforest-Dark-Medium`)
+- `[gtk] light` / `dark` — GTK theme names shown in gnome-tweaks (defaults: `Everforest-Light` / `Everforest-Dark`)
+
+The GNOME Terminal profile is created automatically on first run — no manual setup.
 
 ## Use
 

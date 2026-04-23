@@ -9,9 +9,3 @@ repo_path = "/home/ole/workspace/dotfiles"
 # GTK theme names as shown in gnome-tweaks. These must be installed.
 light = "Everforest-Light"
 dark  = "Everforest-Dark"
-
-[gnome_terminal]
-# UUID of the GNOME Terminal profile that should receive Everforest colors.
-# Find it with: dconf list /org/gnome/terminal/legacy/profiles:/
-# See gnome-terminal/README.md for setup.
-profile_uuid = ""

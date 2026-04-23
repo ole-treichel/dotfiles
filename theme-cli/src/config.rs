@@ -8,18 +8,12 @@ use serde::Deserialize;
 pub struct Config {
     pub repo_path: PathBuf,
     pub gtk: Gtk,
-    pub gnome_terminal: GnomeTerminal,
 }
 
 #[derive(Debug, Deserialize)]
 pub struct Gtk {
     pub light: String,
     pub dark: String,
-}
-
-#[derive(Debug, Deserialize)]
-pub struct GnomeTerminal {
-    pub profile_uuid: String,
 }
 
 impl Config {
