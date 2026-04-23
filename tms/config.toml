@@ -1,5 +1,5 @@
 default_session = "workspace"
 
 [[search_dirs]]
-path = "/home/ole/workspace"
+path = "~/workspace"
 depth = 3
