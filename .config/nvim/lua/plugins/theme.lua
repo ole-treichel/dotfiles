@@ -29,6 +29,23 @@ return {
     vim.opt.background = system_background()
     require("everforest").setup({
       background = "soft",
+      -- The default `DiagnosticUnderline*` groups set `fg` to the diagnostic
+      -- colour, which recolours the *entire* underlined range and wipes out
+      -- syntax highlighting for any line/block with an error or warning.
+      -- Clear the foreground and move the colour onto `sp` so only the
+      -- undercurl is coloured and the code stays syntax-highlighted.
+      on_highlights = function(hl, palette)
+        local underline = {
+          DiagnosticUnderlineError = palette.red,
+          DiagnosticUnderlineWarn = palette.yellow,
+          DiagnosticUnderlineInfo = palette.blue,
+          DiagnosticUnderlineHint = palette.purple,
+          DiagnosticUnderlineOk = palette.green,
+        }
+        for group, colour in pairs(underline) do
+          hl[group] = { sp = colour, undercurl = true }
+        end
+      end,
     })
     vim.cmd([[colorscheme everforest]])
   end,
