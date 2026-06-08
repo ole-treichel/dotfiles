@@ -16,7 +16,13 @@ return {
         if vim.fs.root(bufnr, { 'deno.json', 'deno.jsonc' }) then
           return
         end
-        on_dir(vim.fs.root(bufnr, { 'package.json' }))
+        -- Only attach in real Node projects. Without a package.json there is no
+        -- TypeScript installation, so skip on_dir entirely and the server never
+        -- starts (avoids the "Could not find a valid TypeScript installation" error).
+        local root = vim.fs.root(bufnr, { 'package.json' })
+        if root then
+          on_dir(root)
+        end
       end,
     })
 
