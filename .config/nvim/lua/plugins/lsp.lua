@@ -85,6 +85,19 @@ return {
       end,
     })
 
+    -- Run rustfmt (via rust_analyzer) on save for Rust buffers
+    vim.api.nvim_create_autocmd('BufWritePre', {
+      pattern = '*.rs',
+      callback = function()
+        vim.lsp.buf.format {
+          async = false,
+          filter = function(client)
+            return client.name == 'rust_analyzer'
+          end,
+        }
+      end,
+    })
+
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
