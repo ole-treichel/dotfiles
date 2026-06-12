@@ -63,19 +63,15 @@ fn main() -> ExitCode {
         }
     };
 
-    let mut reports: Vec<SurfaceReport> = Vec::new();
-    reports.push(surfaces::system::apply(target, &cfg));
-    reports.push(surfaces::nvim::apply(target, &cfg));
-    reports.push(surfaces::tmux::apply(target, &cfg));
+    let mut reports: Vec<SurfaceReport> = vec![
+        surfaces::system::apply(target, &cfg),
+        surfaces::nvim::apply(target, &cfg),
+        surfaces::tmux::apply(target, &cfg),
+        surfaces::ghostty::apply(target, &cfg),
+    ];
 
     #[cfg(target_os = "linux")]
-    {
-        reports.push(surfaces::gnome_terminal::apply(target, &cfg));
-        reports.push(surfaces::apps::apply(target, &cfg));
-    }
-
-    #[cfg(target_os = "macos")]
-    reports.push(surfaces::ghostty::apply(target, &cfg));
+    reports.push(surfaces::apps::apply(target, &cfg));
 
     reports.push(surfaces::chrome::apply(target, &cfg));
 

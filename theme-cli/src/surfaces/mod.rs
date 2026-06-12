@@ -1,10 +1,11 @@
 #[cfg(target_os = "linux")]
 pub mod apps;
 pub mod chrome;
+pub mod ghostty;
+// Superseded by ghostty on Linux; kept around in case GNOME Terminal returns.
+#[allow(dead_code)]
 #[cfg(target_os = "linux")]
 pub mod gnome_terminal;
-#[cfg(target_os = "macos")]
-pub mod ghostty;
 pub mod nvim;
 pub mod system;
 pub mod tmux;

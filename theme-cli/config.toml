@@ -21,9 +21,8 @@ flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
 # macOS: app name for `open -a`. Leave empty ("") to disable.
 # app_name = "Chromium"
 
-# --- macOS-only ------------------------------------------------------------
 [ghostty]
 # Theme names as shown by `ghostty +list-themes`.
 light = "Everforest Light Med"
-dark  = "Everforest Dark Med"
+dark  = "Everforest Dark Hard"
 # config_path = ""  # auto-detected if empty

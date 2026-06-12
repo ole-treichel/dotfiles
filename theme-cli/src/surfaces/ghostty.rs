@@ -31,7 +31,16 @@ pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
     }
 }
 
+/// Nudge Ghostty to reload its config; it handles SIGUSR2 (Ghostty >= 1.2).
+#[cfg(target_os = "linux")]
+fn trigger_reload() {
+    let _ = Command::new("pkill")
+        .args(["-USR2", "-x", "ghostty"])
+        .output();
+}
+
 /// Nudge Ghostty to reload its config by clicking the menu item via AppleScript.
+#[cfg(target_os = "macos")]
 fn trigger_reload() {
     let _ = Command::new("osascript")
         .args([
