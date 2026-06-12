@@ -24,5 +24,5 @@ flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
 [ghostty]
 # Theme names as shown by `ghostty +list-themes`.
 light = "Everforest Light Med"
-dark  = "Everforest Dark Hard"
+dark  = "Everforest Dark Med"
 # config_path = ""  # auto-detected if empty
