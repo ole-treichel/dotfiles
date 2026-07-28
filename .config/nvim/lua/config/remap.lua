@@ -55,13 +55,19 @@ vim.api.nvim_create_autocmd('filetype', {
 })
 
 -- prevent overwriting clipboard when pasting
-vim.keymap.set('v', 'd', '"_d"')
-vim.keymap.set('v', 'dd', '"_dd"')
+vim.keymap.set('v', 'd', '"_d')
+vim.keymap.set('v', 'dd', '"_dd')
 vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
-vim.keymap.set('n', 'd', '"_d"')
-vim.keymap.set('n', 'diw', '"_diw"')
-vim.keymap.set('n', 'dd', '"_dd"')
-vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
+vim.keymap.set('n', 'd', '"_d')
+vim.keymap.set('n', 'diw', '"_diw')
+vim.keymap.set('n', 'dd', '"_dd')
+
+-- prevent overwriting clipboard when changing
+vim.keymap.set({ 'n', 'v' }, 'c', '"_c')
+vim.keymap.set({ 'n', 'v' }, 'C', '"_C')
+vim.keymap.set('n', 'cc', '"_cc')
+vim.keymap.set('n', 's', '"_s')
+vim.keymap.set('n', 'S', '"_S')
 
 -- show hightlight for search but clear when hitting escape
 vim.opt.hlsearch = true
