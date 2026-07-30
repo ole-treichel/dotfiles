@@ -65,3 +65,7 @@ cd gnome-terminal && dconf load /org/gnome/terminal/legacy/profiles:/ < rose-pin
 ## File Organization
 
 Configuration files follow standard XDG structure under `.config/`. The Neovim configuration is modular with clear separation between core settings and plugin-specific configurations.
+
+## Plans
+
+Always write plans, designs, and decision records to `docs/` as markdown, one file per topic (e.g. `docs/qr-lan.md`). Record the decisions and their rationale, plus deliberate non-goals — not just the final shape.
