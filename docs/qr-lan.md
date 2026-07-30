@@ -3,7 +3,7 @@
 Chrome extension + Rust companion that turns the current tab into a QR code a
 phone on the same LAN can scan, rewriting loopback hosts to the machine's LAN IP.
 
-Status: planned, not implemented.
+Status: implemented in `qr-lan/`.
 
 ## Why the companion is required
 
@@ -37,6 +37,36 @@ including ones for public URLs.
 | Permissions | `activeTab` only |
 | Location | This repo, `qr-lan/` with `companion/` (Cargo) and `extension/` |
 | Install | Single `install.sh`: `cargo build --release`, symlink binary and the per-OS unit file, enable it, print the load-unpacked path |
+
+## Layout
+
+```
+qr-lan/
+  companion/src/main.rs     axum server, /qr handler, PORT constant
+  companion/src/lan.rs      default-route source IP
+  companion/src/rewrite.rs  loopback-host rewrite + its tests
+  extension/                MV3 manifest, popup HTML/CSS/JS
+  service/qr-lan.service    systemd --user unit (Linux)
+  service/de.pixelwerte.qr-lan.plist  LaunchAgent (macOS)
+  install.sh                build, symlink, enable, print load-unpacked path
+```
+
+## Install
+
+```bash
+qr-lan/install.sh
+```
+
+Then load `qr-lan/extension` unpacked at `chrome://extensions` (Developer mode
+on). Shortcut: `Alt+Shift+Q`.
+
+Two implementation notes worth remembering:
+
+- The LAN IP is resolved **per request**, not at startup, so moving between
+  networks needs no restart.
+- The LaunchAgent runs `/bin/sh -c 'exec "$HOME/.local/bin/qr-lan"'`. launchd
+  does not expand `$HOME` in `ProgramArguments`, and the plist is symlinked from
+  the repo rather than generated, so the absolute path cannot be baked in.
 
 ## Deliberate non-goals
 
