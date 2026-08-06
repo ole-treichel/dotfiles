@@ -5,7 +5,9 @@ A Rust CLI that packages the bare-repo worktree workflow used in
 commands. Replaces hand-typed `git worktree add` / `git branch -d` /
 `git worktree prune` sequences.
 
-Status: designed, not implemented.
+Status: implemented in `wt/`. `./wt/install.sh` builds it and links
+`~/.local/bin/wt`. See [Implementation notes](#implementation-notes) for the
+decisions the design left open.
 
 ## The layout it assumes
 
@@ -32,9 +34,10 @@ wt ls                              table of worktrees
 wt clone <url> [name]              build the .bare layout from scratch
 ```
 
-`wt get` and `wt rm` with no argument open a ratatui picker. `wt get` lists
-remote branches that have no worktree; `wt rm` lists existing worktrees with
-dirty/ahead markers and multi-select.
+`wt get` and `wt rm` with no argument open a ratatui picker, both multi-select.
+`wt get` lists remote branches that have no worktree and checks out every one
+you pick; `wt rm` lists existing worktrees with dirty/ahead markers and asks for
+a y/N confirmation before anything is deleted.
 
 ## Decisions
 
@@ -46,7 +49,7 @@ dirty/ahead markers and multi-select.
 | Existing worktrees | Never re-derived. `git worktree list --porcelain` is the authoritative dir↔branch map, which is why the legacy `feat-website-in-sign-up-mail` ↔ `feat-website-in-signup-mail/` mismatch is harmless |
 | Collisions | Hard error, never an auto-suffix. Two branches slugging to the same directory is a mistake worth surfacing |
 | Base ref | `git fetch origin`, then branch from `refs/remotes/origin/HEAD`. `--from <ref>` for stacked branches |
-| `wt rm` | Remove worktree → delete local branch → `git worktree prune` → `tms refresh`. Refuses on dirty tree or unpushed commits; `--force` overrides |
+| `wt rm` | Remove worktree → delete local branch → `git worktree prune` → `tms refresh`. Refuses on dirty tree or unpushed commits; `--force` overrides. Prints what is about to go and waits for y/N; `--yes` skips the prompt |
 | Remote branches | Never deleted. GitHub deletes on merge |
 | tms | `tms refresh` after `new`, `get`, `rm`. Nothing else — no session creation, no window management |
 | git access | Shell out to `git`. `git2`'s worktree API is thin and this is a wrapper, not a reimplementation |
@@ -153,6 +156,26 @@ the binary, and the commit message or PR template can change without a rebuild.
 - **No repair mode.** `wt` will not rename directories or branches to fix the
   legacy slash-branches (`feat/update-logos`) or the mismatched
   `feat-website-in-sign-up-mail`. It reads the real mapping and leaves them be.
+
+## Implementation notes
+
+Decisions taken while building it that the design above did not fix.
+
+| Area | Decision | Why |
+| --- | --- | --- |
+| Layout | `wt/` — `src/{main,git,repo,slug,hooks,picker,tms}.rs` + `src/cmd/{new,get,rm,ls,clone}.rs`. Deps: clap, anyhow, ratatui | `git.rs` is the only place that shells out; every command reads the worktree map through `repo.rs` |
+| Hook lookup | Resolved from the binary's canonicalised path (`<crate>/target/<profile>/wt` → `<crate>/hooks/post-create.d`), so the `~/.local/bin` symlink still finds them. `WT_HOOKS_DIR` overrides | No install step has to copy the dropins, and `cargo run` uses the same ones |
+| "Unpushed" | `git rev-list --count <branch> --not --remotes`, asked of the branch from the repo root | Works whether or not the branch has an upstream (a fresh `wt new` worktree has none until the hook pushes), and a worktree whose directory is already gone still answers |
+| `wt new` tracking | `git worktree add --no-track` | Branching off `origin/main` otherwise leaves `main` as the new branch's upstream until `30-commit-push-pr.sh` pushes. `git push` with no upstream is the safer state |
+| Branch deletion | `git branch -D`, gated on wt's own unpushed check rather than on `-d` | `-d` only knows HEAD and the upstream, so it refuses branches that are fully on origin but lost their tracking config — which is exactly what an earlier `wt rm` leaves behind. Our check ("no commit outside the remotes") is the stronger one. A refusal is still reported as a warning, not an error: the worktree is already gone by then |
+| Lost tracking | `add_worktree` re-points a branch at `origin/<branch>` when it exists locally with no upstream | Re-getting a branch that survived an earlier `wt rm` should not leave `git push` without a target |
+| `wt rm` picker | Hides the default branch's directory (`main/`). Explicit `wt rm main` still works | It is the directory `05-seed-env.sh` seeds from; losing it by mis-click is worse than typing it out |
+| `wt rm` validation | All targets are checked before any is removed, then listed for a y/N confirmation. `--yes` skips it; EOF on stdin (no answer possible) aborts | Multi-select must not half-apply, and the one irreversible command should say what it is about to do |
+| Picker | ratatui, multi-select in both `get` and `rm`, type-to-filter substring match, `↑`/`↓` or `ctrl-p`/`ctrl-n`, `tab` toggles, `enter` confirms (the row under the cursor if nothing is toggled), `esc` cancels. Not a TTY → hard error telling you to pass the argument | A fuzzy matcher is a dependency for a list that is never longer than a screen. `wt get` picking several branches at once is the same "grab the day's work" gesture as `wt rm` clearing it |
+| `tms refresh` | Skipped entirely when `$TMUX` is unset; a failure is a warning | `tms refresh` needs a current session; running `wt` outside tmux is normal and must not fail |
+| `05-seed-env.sh` | Seeds from `$WT_REPO_ROOT/$WT_DEFAULT_BRANCH`, skips paths under `node_modules/`, never overwrites | `--others --ignored` does recurse into ignored directories, and packages do ship `.env` files. One `case` guard, still no exclude list |
+| `wt clone` | Also runs `git remote set-head origin -a` and sets the first worktree's upstream | `wt new` depends on `origin/HEAD`; a bare clone does not set it |
+| Verification | `cargo test` covers `slug()` and URL→name; the rest was exercised end to end against a throwaway local remote (clone → new → ls → get → collisions → dirty/unpushed refusals → confirmation y/n/EOF → `--force` → rm). Both pickers were driven through a pty to check rendering, filtering, toggling and cancel | |
 
 ## Known state to be aware of
 
