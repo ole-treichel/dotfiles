@@ -10,6 +10,12 @@ pub struct Repo {
 }
 
 #[derive(Debug, Clone)]
+pub struct RemoteBranch {
+    pub name: String,
+    pub age: String,
+}
+
+#[derive(Debug, Clone)]
 pub struct Worktree {
     pub path: PathBuf,
     pub head: Option<String>,
@@ -170,8 +176,9 @@ impl Repo {
         )
     }
 
-    /// Remote branches with no worktree checked out for them.
-    pub fn unchecked_remote_branches(&self) -> Result<Vec<String>> {
+    /// Remote branches with no worktree checked out for them, freshest first,
+    /// each with how long ago it was last committed to.
+    pub fn unchecked_remote_branches(&self) -> Result<Vec<RemoteBranch>> {
         let taken: Vec<String> = self
             .checkouts()?
             .into_iter()
@@ -179,14 +186,23 @@ impl Repo {
             .collect();
         let out = git::out(
             &self.root,
-            &["for-each-ref", "--format=%(refname:short)", "refs/remotes/origin"],
+            &[
+                "for-each-ref",
+                "--sort=-committerdate",
+                "--format=%(refname:short)\t%(committerdate:relative)",
+                "refs/remotes/origin",
+            ],
         )?;
         Ok(out
             .lines()
-            .filter_map(|l| l.strip_prefix("origin/"))
-            .filter(|b| *b != "HEAD")
-            .filter(|b| !taken.iter().any(|t| t == b))
-            .map(str::to_string)
+            .filter_map(|l| l.split_once('\t'))
+            .filter_map(|(r, age)| Some((r.strip_prefix("origin/")?, age)))
+            .filter(|(b, _)| *b != "HEAD")
+            .filter(|(b, _)| !taken.iter().any(|t| t == b))
+            .map(|(name, age)| RemoteBranch {
+                name: name.to_string(),
+                age: age.to_string(),
+            })
             .collect())
     }
 

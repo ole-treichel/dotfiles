@@ -123,30 +123,25 @@ fn pick(repo: &Repo, checkouts: &[Worktree]) -> Result<Vec<Worktree>> {
         println!("nothing to remove besides {keep}/");
         return Ok(Vec::new());
     }
-    let width = choices.iter().map(|w| w.name().len()).max().unwrap_or(0);
-    let labels: Vec<String> = choices
+    let items: Vec<picker::Item> = choices
         .iter()
         .map(|w| {
-            let mut marks = Vec::new();
+            let mut item = picker::Item::new(w.name())
+                .secondary(w.branch.clone().unwrap_or_else(|| "(detached)".into()));
             if w.dirty() {
-                marks.push("dirty".to_string());
+                item = item.tag("dirty", picker::Tone::Warn);
             }
             let ahead = w.unpushed(&repo.root);
             if ahead > 0 {
-                marks.push(format!("↑{ahead}"));
+                item = item.tag(format!("↑{ahead}"), picker::Tone::Warn);
             }
             if w.prunable {
-                marks.push("prunable".to_string());
+                item = item.tag("prunable", picker::Tone::Muted);
             }
-            format!(
-                "{:<width$}  {}  {}",
-                w.name(),
-                w.branch.clone().unwrap_or_else(|| "(detached)".into()),
-                marks.join(" ")
-            )
+            item
         })
         .collect();
-    let picked = picker::pick("rm worktrees", &labels, true)?;
+    let picked = picker::pick("remove worktrees", &items, true)?;
     Ok(picked.into_iter().map(|i| choices[i].clone()).collect())
 }
 

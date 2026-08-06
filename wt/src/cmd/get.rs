@@ -20,8 +20,15 @@ pub fn run(branch: Option<String>) -> Result<()> {
                 println!("every remote branch already has a worktree");
                 return Ok(());
             }
-            let picked = picker::pick("get branches", &candidates, true)?;
-            picked.into_iter().map(|i| candidates[i].clone()).collect()
+            let items: Vec<picker::Item> = candidates
+                .iter()
+                .map(|b| picker::Item::new(&b.name).tag(&b.age, picker::Tone::Muted))
+                .collect();
+            let picked = picker::pick("check out branches", &items, true)?;
+            picked
+                .into_iter()
+                .map(|i| candidates[i].name.clone())
+                .collect()
         }
     };
     if branches.is_empty() {
