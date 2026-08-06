@@ -40,7 +40,19 @@ Run from anywhere inside the repo — `wt` walks up until it finds `.bare/`.
 - `wt get` / `wt rm` with no argument open a multi-select picker: type to
   filter, `↑`/`↓` or `ctrl-p`/`ctrl-n` to move, `tab` to toggle, `enter` to
   confirm (the row under the cursor if you toggled nothing), `esc` to cancel.
-  `wt get` checks out every branch you pick.
+  `wt get` checks out every branch you pick, freshest branch first.
+
+```
+╭ remove worktrees ───────────────────────────────── 1 selected  4/4 ╮
+│ ❯ ▏ type to filter                                                 │
+│                                                                    │
+│   ✓ feat-consent                    feat-consent  dirty            │
+│ ❯ · feat-cookie-banner              feat-cookie-banner             │
+│   · feat-master-product-data-table  feat/master-product-data-table │
+│   · fix-login-redirect              fix-login-redirect  ↑1         │
+╰───────────── tab select · enter confirm · esc cancel ──────────────╯
+```
+
 - `wt rm` lists what it is about to delete and waits for a y/N; `--yes` skips
   the prompt. It refuses on uncommitted changes or unpushed commits; `--force`
   overrides. Remote branches are never deleted.
@@ -54,7 +66,7 @@ aborts the rest and leaves the worktree in place.
 ```
 05-seed-env.sh        copy gitignored .env* from the default-branch worktree
 10-scaffold-docs.sh   docs/<slug>/prd.md + knowledge.md  (new only, needs docs/)
-30-commit-push-pr.sh  commit, push -u, gh pr create --draft  (new only)
+30-commit-push-pr.sh  commit "init", push -u, gh pr create  (new only)
 ```
 
 Environment:

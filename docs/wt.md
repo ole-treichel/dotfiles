@@ -66,7 +66,7 @@ you invoke from.
 
 An empty branch identical to its base cannot have a PR — GitHub rejects it with
 "no commits between". The scaffolded `docs/<slug>/` files are what make the
-first commit, and therefore the draft PR, possible.
+first commit, and therefore the PR, possible.
 
 ## Hook system
 
@@ -77,7 +77,7 @@ lives in shell dropins in this repo, next to the CLI:
 wt/hooks/post-create.d/
   05-seed-env.sh          copy gitignored .env* from main/
   10-scaffold-docs.sh     docs/<slug>/prd.md + knowledge.md
-  30-commit-push-pr.sh    commit, push -u, gh pr create --draft
+  30-commit-push-pr.sh    commit "init", push -u, gh pr create
 ```
 
 Contract:
@@ -133,11 +133,15 @@ heading and empty sections.
 ```sh
 git add -A
 git diff --cached --quiet && exit 0
-git commit -m "chore($WT_SLUG): scaffold docs"
+git commit -m "init"
 git push -u origin "$WT_BRANCH"
-command -v gh >/dev/null && gh pr create --draft \
+command -v gh >/dev/null && gh pr create \
   --base "$WT_DEFAULT_BRANCH" --title "$WT_SLUG" --body "See docs/$WT_SLUG/prd.md"
 ```
+
+The commit is just `init` — it is the branch's starting point, not a change
+worth describing. The PR is a real one, not a draft: draft state buys nothing
+here, since the PR exists from the first commit and is worked on either way.
 
 Keeping push and PR in a hook rather than in Rust means no `gh` dependency in
 the binary, and the commit message or PR template can change without a rebuild.
@@ -172,6 +176,8 @@ Decisions taken while building it that the design above did not fix.
 | `wt rm` picker | Hides the default branch's directory (`main/`). Explicit `wt rm main` still works | It is the directory `05-seed-env.sh` seeds from; losing it by mis-click is worse than typing it out |
 | `wt rm` validation | All targets are checked before any is removed, then listed for a y/N confirmation. `--yes` skips it; EOF on stdin (no answer possible) aborts | Multi-select must not half-apply, and the one irreversible command should say what it is about to do |
 | Picker | ratatui, multi-select in both `get` and `rm`, type-to-filter substring match, `↑`/`↓` or `ctrl-p`/`ctrl-n`, `tab` toggles, `enter` confirms (the row under the cursor if nothing is toggled), `esc` cancels. Not a TTY → hard error telling you to pass the argument | A fuzzy matcher is a dependency for a list that is never longer than a screen. `wt get` picking several branches at once is the same "grab the day's work" gesture as `wt rm` clearing it |
+| Picker looks | A rounded panel sized to its content (never full-screen), title left, counts right, keys in the bottom border. Rows are structured, not preformatted strings: `Item { primary, secondary, tags }`, so the picker owns alignment and colour — name column padded to a shared width, branch dimmed, `dirty`/`↑n` yellow, `prunable`/age muted. Cursor is an accent `❯` plus a bold row, selection a green `✓` | Only ANSI-named colours are used, so the terminal theme (rose-pine, and whatever `theme light`/`dark` switches to) stays in charge. Selection is drawn by the row builder rather than ratatui's `highlight_style`, because `set_style` over the row would flatten the per-column colours |
+| `wt get` list | Sorted `-committerdate`, each branch tagged with its relative age | The picker is where you decide; "2 minutes ago" vs "7 months ago" is the deciding information, and it comes free from the `for-each-ref` that already runs |
 | `tms refresh` | Skipped entirely when `$TMUX` is unset; a failure is a warning | `tms refresh` needs a current session; running `wt` outside tmux is normal and must not fail |
 | `05-seed-env.sh` | Seeds from `$WT_REPO_ROOT/$WT_DEFAULT_BRANCH`, skips paths under `node_modules/`, never overwrites | `--others --ignored` does recurse into ignored directories, and packages do ship `.env` files. One `case` guard, still no exclude list |
 | `wt clone` | Also runs `git remote set-head origin -a` and sets the first worktree's upstream | `wt new` depends on `origin/HEAD`; a bare clone does not set it |
