@@ -1,4 +1,5 @@
 default_session = "workspace"
+list_worktrees = true
 
 [[search_dirs]]
 path = "~/workspace"
