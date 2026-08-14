@@ -10,22 +10,6 @@ return {
       capabilities = capabilities,
     })
 
-    -- TypeScript (only for Node.js projects, not Deno)
-    vim.lsp.config('ts_ls', {
-      root_dir = function(bufnr, on_dir)
-        if vim.fs.root(bufnr, { 'deno.json', 'deno.jsonc' }) then
-          return
-        end
-        -- Only attach in real Node projects. Without a package.json there is no
-        -- TypeScript installation, so skip on_dir entirely and the server never
-        -- starts (avoids the "Could not find a valid TypeScript installation" error).
-        local root = vim.fs.root(bufnr, { 'package.json' })
-        if root then
-          on_dir(root)
-        end
-      end,
-    })
-
     -- Deno
     vim.lsp.config('denols', {
       root_markers = { 'deno.json', 'deno.jsonc' },
@@ -50,7 +34,7 @@ return {
 
     -- Enable all servers
     vim.lsp.enable({
-      'ts_ls',
+      'tsc',
       'denols',
       'cssls',
       'rust_analyzer',
