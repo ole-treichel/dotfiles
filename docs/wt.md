@@ -1,7 +1,7 @@
 # wt — git worktree CLI
 
 A Rust CLI that packages the bare-repo worktree workflow used in
-`~/workspace/sonax/sonax-apps` and `~/workspace/sonax/sonax-redesign` into five
+`~/workspace/sonax/sonax-apps` and `~/workspace/sonax/sonax-redesign` into six
 commands. Replaces hand-typed `git worktree add` / `git branch -d` /
 `git worktree prune` sequences.
 
@@ -32,12 +32,15 @@ wt get [branch]                    check out an existing remote branch
 wt rm  [dir...]                    remove worktree(s) + local branch(es)
 wt ls                              table of worktrees
 wt clone <url> [name]              build the .bare layout from scratch
+wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
 ```
 
 `wt get` and `wt rm` with no argument open a ratatui picker, both multi-select.
 `wt get` lists remote branches that have no worktree and checks out every one
 you pick; `wt rm` lists existing worktrees with dirty/ahead markers and asks for
 a y/N confirmation before anything is deleted.
+
+`wt vault` is a separate, smaller design: [wt-vault.md](wt-vault.md).
 
 ## Decisions
 

@@ -29,6 +29,7 @@ wt get [branch]                    check out existing remote branch(es)
 wt rm  [dir...] [--force] [--yes]  remove worktree(s) + local branch(es)
 wt ls                              table of worktrees
 wt clone <url> [name]              build the .bare layout from scratch
+wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
 ```
 
 Run from anywhere inside the repo — `wt` walks up until it finds `.bare/`.
@@ -56,6 +57,15 @@ Run from anywhere inside the repo — `wt` walks up until it finds `.bare/`.
 - `wt rm` lists what it is about to delete and waits for a y/N; `--yes` skips
   the prompt. It refuses on uncommitted changes or unpushed commits; `--force`
   overrides. Remote branches are never deleted.
+- `wt vault [slug...]` symlinks a worktree's `docs/<slug>/` (scaffolded by
+  `10-scaffold-docs.sh`) into the Obsidian vault as
+  `<vault>/<repo-name>-<slug>`, so it's readable/editable in Obsidian. No
+  argument opens a picker of worktrees that have a `docs/<slug>/` to link.
+  Re-running relinks (`ln -sfn` semantics); a name already occupied by a real
+  vault file/folder is left alone. Each slug is linked independently — one
+  failure doesn't stop the rest. Needs `vault = "~/…"` in
+  `~/.config/wt/config.toml` (linked from `wt/config.toml` by `install.sh`).
+  Design: [`../docs/wt-vault.md`](../docs/wt-vault.md).
 
 ## Hooks
 

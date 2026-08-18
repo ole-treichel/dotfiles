@@ -1,7 +1,9 @@
 # wt vault — symlink branch docs into Obsidian
 
-Status: **designed, not yet implemented.** Extends [`wt`](wt.md) with a new
-subcommand; nothing below exists in `wt/src` yet.
+Status: implemented in `wt/`. Extends [`wt`](wt.md) with a new subcommand.
+`./wt/install.sh` links `~/.config/wt/config.toml`. See
+[Implementation notes](#implementation-notes) for the decisions the design
+left open.
 
 ## Problem
 
@@ -85,10 +87,15 @@ solely so a naming collision can't silently eat unrelated vault content.
 - **No listing/status command** (e.g. "which worktrees are already linked").
   Out of scope until it's actually needed.
 
-## Open for implementation
+## Implementation notes
 
-- New `wt/config.toml` + `install.sh` symlink step (mirrors `tms/install.sh`).
-- A `config.rs` (or similar) to read and tilde-expand `vault`.
-- `src/cmd/vault.rs`: arg parsing, picker reuse (see `picker.rs`), the actual
-  `symlink()` call with the overwrite-guard described above.
-- Update `wt/README.md`'s command table once built.
+Decisions taken while building it that the design above did not fix.
+
+| Area | Decision | Why |
+| --- | --- | --- |
+| Layout | `wt/config.toml` (new) linked by `install.sh`, mirroring `tms/install.sh`'s `~/.config/tms/config.toml` step. New `src/config.rs` and `src/cmd/vault.rs` | Same install pattern already used for `tms`; `vault.rs` reuses `picker.rs` and `repo::{Repo, Worktree}` like `rm.rs` does |
+| Config parsing | Hand-written line parser (`vault_value` in `config.rs`) for the single `vault = "..."` key — no `toml`/`serde` dependency added | `wt`'s only other dependencies are clap/anyhow/ratatui; the config has exactly one key, so a parser is a few lines and a full TOML crate would be dead weight until the file actually grows a second key |
+| `docs/<slug>/` location | `<worktree-path>/docs/<worktree-name>` — e.g. `sonax-apps/feat-cookie-banner/docs/feat-cookie-banner/` | Matches what `10-scaffold-docs.sh` actually writes: it runs with cwd set to the worktree and does `mkdir -p docs/$WT_SLUG`, and `$WT_SLUG` is the same slug as the worktree's own directory name |
+| Argument resolution | `slugs` resolves against *all* checkouts by name or path, exactly like `rm.rs`'s `resolve` — an unknown slug is a hard error for the whole invocation, not a per-slug failure | Matches the existing `rm` precedent the design explicitly compares this argument form to. The "one failure doesn't abort the rest" guarantee applies once slugs are resolved to worktrees — to a missing `docs/<slug>/` or a name collision at the vault destination, not to typos in the arguments |
+| Overwrite guard | `Path::is_symlink()` (lstat-based, true even for a dangling symlink) gates removal; `remove_file` then `symlink`, no atomic rename | `is_symlink()` is the one check that tells a real vault file/folder apart from even a broken link, which is exactly the guard the design calls for. Plain remove-then-create matches the rest of the codebase's preference for the simplest thing that is still correct |
+| Verification | `cargo test` (the new `config::tests::reads_the_vault_line`, plus the existing `slug`/`clone` tests) and `cargo clippy --all-targets`, both clean. Exercised end to end against a throwaway bare-repo layout: picker-eligibility filtering (docs vs. no-docs worktrees), the per-slug batch failure with one success + one failure, idempotent relink, relinking over a dangling symlink, and refusal to clobber a real file/folder occupying the destination name | Mirrors `wt.md`'s own "throwaway local remote" verification approach |

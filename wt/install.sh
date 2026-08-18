@@ -11,6 +11,10 @@ cargo build --release --manifest-path "$repo/Cargo.toml"
 echo "==> making hooks executable"
 chmod +x "$repo"/hooks/post-create.d/*.sh
 
+echo "==> linking $HOME/.config/wt/config.toml"
+mkdir -p "$HOME/.config/wt"
+ln -sfn "$repo/config.toml" "$HOME/.config/wt/config.toml"
+
 echo "==> linking $HOME/.local/bin/wt"
 mkdir -p "$HOME/.local/bin"
 ln -sfn "$binary" "$HOME/.local/bin/wt"

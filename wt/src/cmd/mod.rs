@@ -3,3 +3,4 @@ pub mod get;
 pub mod ls;
 pub mod new;
 pub mod rm;
+pub mod vault;

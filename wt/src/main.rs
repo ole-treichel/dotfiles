@@ -1,4 +1,5 @@
 mod cmd;
+mod config;
 mod git;
 mod hooks;
 mod picker;
@@ -52,6 +53,11 @@ enum Command {
         /// Directory name (defaults to the repository name)
         name: Option<String>,
     },
+    /// Symlink docs/<slug>/ into the Obsidian vault (picker if none given)
+    Vault {
+        /// Worktree directories
+        slugs: Vec<String>,
+    },
 }
 
 fn main() {
@@ -62,6 +68,7 @@ fn main() {
         Command::Rm { dirs, force, yes } => cmd::rm::run(&dirs, force, yes),
         Command::Ls => cmd::ls::run(),
         Command::Clone { url, name } => cmd::clone::run(&url, name),
+        Command::Vault { slugs } => cmd::vault::run(&slugs),
     };
     if let Err(e) = result {
         eprintln!("wt: {e:#}");
