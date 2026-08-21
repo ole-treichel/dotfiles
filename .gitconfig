@@ -1,0 +1,32 @@
+[user]
+	email = root@ole.md
+	name = Ole Treichel
+[init]
+	defaultBranch = main
+[pull]
+	rebase = false
+[core]
+	pager = hunk pager
+	editor = nvim
+[interactive]
+  diffFilter = delta --color-only
+[merge]
+  conflictstyle = zdiff3
+[alias]
+	uncommit = reset HEAD^
+	bls = branch --list
+	wtrm = "!f() { git worktree remove \"$1\" && git branch -D \"$2\"; }; f"
+[credential "https://github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[credential "https://gist.github.com"]
+	helper =
+	helper = !/usr/bin/gh auth git-credential
+[delta]
+	light = true
+[diff]
+	tool = hunk
+[difftool "hunk"]
+	cmd = hunk difftool \"$LOCAL\" \"$REMOTE\" \"$MERGED\"
+[difftool]
+	prompt = false
