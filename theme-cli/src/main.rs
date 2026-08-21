@@ -68,6 +68,7 @@ fn main() -> ExitCode {
         surfaces::nvim::apply(target, &cfg),
         surfaces::tmux::apply(target, &cfg),
         surfaces::ghostty::apply(target, &cfg),
+        surfaces::hunk::apply(target, &cfg),
     ];
 
     #[cfg(target_os = "linux")]

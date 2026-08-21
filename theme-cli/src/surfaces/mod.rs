@@ -6,6 +6,7 @@ pub mod ghostty;
 #[allow(dead_code)]
 #[cfg(target_os = "linux")]
 pub mod gnome_terminal;
+pub mod hunk;
 pub mod nvim;
 pub mod system;
 pub mod tmux;

@@ -1,6 +1,6 @@
 # theme-cli
 
-Single command to switch system-wide light/dark mode across GNOME, Neovim, tmux, and GNOME Terminal.
+Single command to switch system-wide light/dark mode across GNOME, Neovim, tmux, GNOME Terminal, and Hunk (git pager/difftool).
 
 `gsettings get org.gnome.desktop.interface color-scheme` is the source of truth. `theme light` / `theme dark` set it and push matching changes to the surfaces that don't auto-follow.
 
