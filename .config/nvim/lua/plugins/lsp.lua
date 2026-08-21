@@ -34,7 +34,7 @@ return {
 
     -- Enable all servers
     vim.lsp.enable({
-      'tsc',
+      'ts_ls',
       'denols',
       'cssls',
       'rust_analyzer',
