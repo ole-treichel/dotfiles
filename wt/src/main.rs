@@ -46,6 +46,9 @@ enum Command {
     },
     /// List worktrees
     Ls,
+    /// Open the repo on GitHub (current branch, or the default branch at the
+    /// workspace root)
+    Open,
     /// Build the bare-repo layout from scratch
     Clone {
         /// Repository URL
@@ -67,6 +70,7 @@ fn main() {
         Command::Get { branch } => cmd::get::run(branch),
         Command::Rm { dirs, force, yes } => cmd::rm::run(&dirs, force, yes),
         Command::Ls => cmd::ls::run(),
+        Command::Open => cmd::open::run(),
         Command::Clone { url, name } => cmd::clone::run(&url, name),
         Command::Vault { slugs } => cmd::vault::run(&slugs),
     };

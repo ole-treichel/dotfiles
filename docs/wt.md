@@ -33,6 +33,7 @@ wt rm  [dir...]                    remove worktree(s) + local branch(es)
 wt ls                              table of worktrees
 wt clone <url> [name]              build the .bare layout from scratch
 wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
+wt open                            open the repo on GitHub
 ```
 
 `wt get` and `wt rm` with no argument open a ratatui picker, both multi-select.
@@ -57,6 +58,7 @@ a y/N confirmation before anything is deleted.
 | tms | `tms refresh` after `new`, `get`, `rm`. Nothing else — no session creation, no window management |
 | git access | Shell out to `git`. `git2`'s worktree API is thin and this is a wrapper, not a reimplementation |
 | Install | `wt/` in this repo, `cargo build --release`, symlink `~/.local/bin/wt`, same as `qr-lan` |
+| `wt open` | GitHub only, via `xdg-open`. At the workspace root, opens `origin/HEAD`'s branch; inside a worktree (or a subdirectory of one), opens that worktree's checked-out branch |
 
 ### Why `origin/HEAD` and not the `main/` worktree
 
@@ -160,6 +162,8 @@ the binary, and the commit message or PR template can change without a rebuild.
 - **No dependency install.** `npm install` in a new worktree stays manual.
 - **No per-repo configuration**, no `.wt.toml`, no repo-local hook overrides.
 - **No remote branch deletion.**
+- **`wt open` is GitHub-only.** No GitLab/Bitbucket/generic-remote URL
+  mapping — every repo this wraps lives on GitHub.
 - **No repair mode.** `wt` will not rename directories or branches to fix the
   legacy slash-branches (`feat/update-logos`) or the mismatched
   `feat-website-in-sign-up-mail`. It reads the real mapping and leaves them be.
@@ -185,6 +189,10 @@ Decisions taken while building it that the design above did not fix.
 | `05-seed-env.sh` | Seeds from `$WT_REPO_ROOT/$WT_DEFAULT_BRANCH`, skips paths under `node_modules/`, never overwrites | `--others --ignored` does recurse into ignored directories, and packages do ship `.env` files. One `case` guard, still no exclude list |
 | `wt clone` | Also runs `git remote set-head origin -a` and sets the first worktree's upstream | `wt new` depends on `origin/HEAD`; a bare clone does not set it |
 | Verification | `cargo test` covers `slug()` and URL→name; the rest was exercised end to end against a throwaway local remote (clone → new → ls → get → collisions → dirty/unpushed refusals → confirmation y/n/EOF → `--force` → rm). Both pickers were driven through a pty to check rendering, filtering, toggling and cancel | |
+| `wt open` branch resolution | Compares canonicalised `cwd` against the canonicalised workspace root and each worktree's path (`starts_with`, so a subdirectory of a worktree still resolves) rather than re-deriving from `git branch --show-current`, which only answers for `cwd` itself, not a subdirectory | Reuses the same `Repo::checkouts()` map every other command trusts, instead of a second way to ask "what branch is this" |
+| `wt open` URL shape | Always `<repo>/tree/<branch>`, even for the default branch | GitHub renders `/tree/main` identically to the repo root, so one code path covers both cases instead of special-casing the default branch |
+| `wt open` browser launch | `Command::new("xdg-open").spawn()`, not `.status()` | `wt` should return as soon as the browser is launched, not block until it's closed |
+| `wt open` verification | `cargo test` covers the GitHub URL mapping (SSH/HTTPS, with/without `.git`, non-GitHub rejected). Exercised end to end against a throwaway local bare-repo layout with a `git@github.com:...` origin rewritten in after clone: from the workspace root, from inside a worktree, and from a subdirectory nested inside a non-default worktree | |
 
 ## Known state to be aware of
 

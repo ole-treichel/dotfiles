@@ -164,6 +164,11 @@ impl Repo {
         )
     }
 
+    /// `origin`'s URL, e.g. `git@github.com:acme/sonax-apps.git`.
+    pub fn origin_url(&self) -> Result<String> {
+        git::out(&self.root, &["remote", "get-url", "origin"])
+    }
+
     pub fn remote_branch_exists(&self, branch: &str) -> bool {
         git::ok(
             &self.root,
