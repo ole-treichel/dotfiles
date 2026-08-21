@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # tms-layout — give a freshly created tmux session the standard 3-window layout:
 #
-#   1 nvim   50/50 vertical split, `nvim .` on top, bare shell below
-#   2 git    shell running lazygit
+#   1 nvim   vertical split, `nvim .` on top (~75%), bare shell below (~25%)
+#   2 git    vertical split, lazygit on top, `hunk diff --watch` below
 #   3 ai     shell running claude
 #
 # Everything runs inside a normal shell, so quitting an app leaves a prompt.
@@ -63,20 +63,24 @@ if is_worktree_root "$path"; then
   exit 0
 fi
 
-# Window 1: nvim on top, shell below. Renaming also stops tmux from
-# auto-renaming the window after whatever process runs in it.
+# Window 1: nvim on top (~75%), shell below (~25%). Renaming also stops tmux
+# from auto-renaming the window after whatever process runs in it.
 window=$(tmux list-windows -t "=$session" -F '#{window_id}' | head -1)
 tmux rename-window -t "$window" nvim
 editor=$(tmux list-panes -t "$window" -F '#{pane_id}' | head -1)
-tmux split-window -v -c "$path" -t "$editor"
+tmux split-window -v -l 25% -c "$path" -t "$editor"
 tmux send-keys -t "$editor" 'nvim .' Enter
 
-for spec in "git:lazygit" "ai:claude"; do
-  name=${spec%%:*}
-  command=${spec#*:}
-  window=$(tmux new-window -a -d -t "$window" -n "$name" -c "$path" -P -F '#{window_id}')
-  tmux send-keys -t "$window" "$command" Enter
-done
+# Window 2: lazygit on top, `hunk diff --watch` below.
+window=$(tmux new-window -a -d -t "$window" -n git -c "$path" -P -F '#{window_id}')
+lazygit_pane=$(tmux list-panes -t "$window" -F '#{pane_id}' | head -1)
+tmux send-keys -t "$lazygit_pane" lazygit Enter
+hunk_pane=$(tmux split-window -v -c "$path" -t "$lazygit_pane" -P -F '#{pane_id}')
+tmux send-keys -t "$hunk_pane" 'hunk diff --watch' Enter
+
+# Window 3: shell running claude.
+window=$(tmux new-window -a -d -t "$window" -n ai -c "$path" -P -F '#{window_id}')
+tmux send-keys -t "$window" claude Enter
 
 tmux select-window -t "=$session:^"
 tmux select-pane -t "$editor"
