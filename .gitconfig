@@ -23,7 +23,7 @@
 	helper =
 	helper = !/usr/bin/gh auth git-credential
 [delta]
-	light = true
+	dark = true
 [diff]
 	tool = hunk
 [difftool "hunk"]

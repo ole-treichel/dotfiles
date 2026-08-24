@@ -69,6 +69,7 @@ fn main() -> ExitCode {
         surfaces::tmux::apply(target, &cfg),
         surfaces::ghostty::apply(target, &cfg),
         surfaces::hunk::apply(target, &cfg),
+        surfaces::delta::apply(target, &cfg),
     ];
 
     #[cfg(target_os = "linux")]
