@@ -82,6 +82,36 @@ return {
       end,
     })
 
+    -- Some macros (e.g. topcoat's `view!`) span a whole generated code block
+    -- onto one component-tag position, so rust-analyzer's `gd` there returns
+    -- many candidates sharing that span, with the real target buried among
+    -- them (see docs/topcoat-view-goto-definition.md). When that happens,
+    -- narrow to the single candidate whose line actually defines the word
+    -- under the cursor as a fn; otherwise fall back to the normal list.
+    local function rust_definition()
+      local word = vim.fn.expand('<cword>')
+      vim.lsp.buf.definition {
+        on_list = function(t)
+          local items = t.items
+          if word ~= '' and #items > 1 then
+            local pattern = 'fn%s+' .. vim.pesc(word) .. '%s*[%(<]'
+            local filtered = vim.tbl_filter(function(item)
+              return item.text and item.text:find(pattern) ~= nil
+            end, items)
+            if #filtered == 1 then
+              items = filtered
+            end
+          end
+          vim.fn.setqflist({}, ' ', { title = t.title or 'LSP definitions', items = items })
+          if #items == 1 then
+            vim.cmd 'silent! cfirst'
+          else
+            vim.cmd 'botright copen'
+          end
+        end,
+      }
+    end
+
     -- Use LspAttach autocommand to only map the following keys
     -- after the language server attaches to the current buffer
     vim.api.nvim_create_autocmd('LspAttach', {
@@ -93,7 +123,11 @@ return {
         -- Buffer local mappings.
         -- See `:help vim.lsp.*` for documentation on any of the below functions
         local opts = { buffer = ev.buf }
-        vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        if vim.bo[ev.buf].filetype == 'rust' then
+          vim.keymap.set('n', 'gd', rust_definition, opts)
+        else
+          vim.keymap.set('n', 'gd', vim.lsp.buf.definition, opts)
+        end
         vim.keymap.set('n', 'K', vim.lsp.buf.hover, opts)
         vim.keymap.set('n', '<space>rn', vim.lsp.buf.rename, opts)
         vim.keymap.set('n', 'grr', vim.lsp.buf.references)
