@@ -42,7 +42,21 @@ cat <<EOF
 ==> done
 Companion listening on http://127.0.0.1:48213
 
-Load the extension once per machine:
+Load the extension once per machine.
+
+Chrome/Chromium — survives restarts:
   chrome://extensions -> Developer mode -> Load unpacked ->
   $repo/extension
+
+Firefox — pick one:
+  a) about:debugging#/runtime/this-firefox -> Load Temporary Add-on ->
+     $repo/extension/manifest.json
+     Zero setup, but gone on every browser restart.
+  b) Developer Edition, Nightly or ESR only: set
+     xpinstall.signatures.required = false in about:config, then install
+     $repo/extension as an unpacked add-on. Survives restarts.
+  Release and Beta Firefox refuse unsigned add-ons permanently, so (a) is
+  the only option there short of signing the extension through AMO.
+
+Shortcut in both: Alt+Shift+Q
 EOF

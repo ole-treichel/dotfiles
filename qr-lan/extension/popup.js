@@ -2,6 +2,12 @@
 // a config file.
 const PORT = 48213;
 
+// Firefox exposes promise-returning APIs on `browser` and keeps `chrome`
+// callback-only, so `await chrome.tabs.query(...)` yields undefined there.
+// Chrome only grew `browser` in 148. Taking whichever exists covers both
+// without a polyfill for the single call this popup makes.
+const ext = globalThis.browser ?? globalThis.chrome;
+
 const app = document.getElementById("app");
 
 function showStatus(text) {
@@ -30,7 +36,7 @@ function show(url, svgSource) {
 }
 
 async function main() {
-  const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
+  const [tab] = await ext.tabs.query({ active: true, currentWindow: true });
   const url = tab?.url ?? "";
   if (!/^https?:/.test(url)) {
     showStatus("Can't share this page");
