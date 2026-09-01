@@ -76,6 +76,7 @@ fn main() -> ExitCode {
     reports.push(surfaces::apps::apply(target, &cfg));
 
     reports.push(surfaces::chrome::apply(target, &cfg));
+    reports.push(surfaces::firefox::apply(target, &cfg));
 
     let mut any_err = false;
     for r in &reports {

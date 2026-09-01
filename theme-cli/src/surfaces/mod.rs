@@ -2,6 +2,7 @@
 pub mod apps;
 pub mod chrome;
 pub mod delta;
+pub mod firefox;
 pub mod ghostty;
 // Superseded by ghostty on Linux; kept around in case GNOME Terminal returns.
 #[allow(dead_code)]

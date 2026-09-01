@@ -13,6 +13,8 @@ pub struct Config {
     #[serde(default)]
     pub chrome: Chrome,
     #[serde(default)]
+    pub firefox: Firefox,
+    #[serde(default)]
     pub ghostty: Option<Ghostty>,
 }
 
@@ -30,6 +32,31 @@ pub struct Chrome {
     pub flatpak_app_id: String,
     #[serde(default)]
     pub app_name: String,
+}
+
+#[derive(Debug, Deserialize)]
+#[allow(dead_code)]
+pub struct Firefox {
+    #[serde(default)]
+    pub flatpak_app_id: String,
+    #[serde(default)]
+    pub app_name: String,
+    #[serde(default = "default_firefox_profile")]
+    pub profile: String,
+}
+
+impl Default for Firefox {
+    fn default() -> Self {
+        Self {
+            flatpak_app_id: String::new(),
+            app_name: String::new(),
+            profile: default_firefox_profile(),
+        }
+    }
+}
+
+fn default_firefox_profile() -> String {
+    "default-release".to_string()
 }
 
 #[derive(Debug, Deserialize)]

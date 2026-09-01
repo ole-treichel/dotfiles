@@ -21,6 +21,17 @@ flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
 # macOS: app name for `open -a`. Leave empty ("") to disable.
 # app_name = "Chromium"
 
+[firefox]
+# Linux: Flatpak app ID. Leave empty ("") to disable.
+flatpak_app_id = "org.mozilla.firefox"
+# macOS: app name for `open -a`/`osascript`. Leave empty ("") to disable.
+# app_name = "Firefox"
+# Firefox profile name (as shown in about:profiles) to load the theme into.
+# Applied via `web-ext run --keep-profile-changes`, which makes destructive,
+# insecure-for-daily-use changes to this profile (enables silent remote
+# debugging connections, etc) — accepted trade-off for using the real profile.
+profile = "default-release"
+
 [ghostty]
 # Theme names as shown by `ghostty +list-themes`.
 light = "Everforest Light Med"
