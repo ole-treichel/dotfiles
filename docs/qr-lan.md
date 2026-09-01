@@ -37,13 +37,15 @@ dependency for *every* QR, including ones for public URLs.
 | QR render | Rust `qrcode` crate → SVG string, inlined into the popup DOM |
 | Access control | `Access-Control-Allow-Origin: *`, loopback bind, no token. The companion authorises no origin in particular, so the extension's differing ID per browser and per machine does not matter |
 | Lifecycle | Login service: systemd `--user` unit (Linux) + LaunchAgent (macOS), enabled once per machine |
-| Popup | QR + rewritten URL as text + click-to-copy + `commands` keyboard shortcut (`_execute_action`, MV3-only in both browsers) |
+| Popup | QR + rewritten URL as text + click-to-copy + `commands` keyboard shortcut (`_execute_action`, MV3-only in both browsers, no default key — see Firefox support) |
 | Permissions | `activeTab` only. `data_collection_permissions.required: ["none"]` for Firefox — the tab URL goes to a loopback companion on the same machine and is never transmitted off-device, so there is nothing to disclose |
 | Extension API namespace | `globalThis.browser ?? globalThis.chrome`, not the `webextension-polyfill` dependency. Firefox keeps `chrome` callback-only and puts promises on `browser`; Chrome only added `browser` in 148. The popup makes exactly one API call, so a two-token fallback beats a vendored polyfill |
 | Firefox add-on ID | Pinned as `qr-lan@pixelwerte.de`. Required for signing, and harmless otherwise |
 | Firefox version floor | `strict_min_version` 140 (142 for `gecko_android`), set by `data_collection_permissions` rather than by anything the extension does — the code itself works from Firefox 109. Chosen so `addons-linter` is clean; nothing in reach runs a Firefox that old |
 | Location | This repo, `qr-lan/` with `companion/` (Cargo) and `extension/` |
-| Install | Single `install.sh`: `cargo build --release`, symlink binary and the per-OS unit file, enable it, print the per-browser load instructions |
+| Install | Single `install.sh`: `cargo build --release`, symlink binary and the per-OS unit file, enable it, build the `.xpi`, print the per-browser load instructions |
+| Packaging | `package.sh` zips `extension/` to `dist/qr-lan.xpi`. Not a build step — the extension stays plain unpacked files that Chrome loads directly. The zip exists solely because a Flatpak Firefox can only be handed one file through the portal |
+| Signing | `sign.sh`, opt-in, `unlisted` channel. Only route to a restart-surviving install on release Firefox, which hard-codes signature enforcement. Credentials via `AMO_JWT_ISSUER`/`AMO_JWT_SECRET`, passed to web-ext through `WEB_EXT_*` env vars rather than `--api-secret` so the secret never lands in argv where `ps` can read it |
 
 ## Firefox support
 
@@ -62,15 +64,63 @@ extension directory rather than two.
    `data_collection_permissions` for new extensions
    [since 2025-11-03](https://blog.mozilla.org/addons/2025/10/23/data-collection-consent-changes-for-new-firefox-extensions/);
    declared as `["none"]`.
+4. **Popup rendered as a tiny empty box — the Flatpak document portal.** The
+   inspector showed literally `<html><head></head><body></body></html>` and no
+   errors. Not a CSS bug: Firefox never read `popup.html` at all.
+
+   Firefox here is a Flatpak (`org.mozilla.firefox`). `about:debugging` ->
+   Load Temporary Add-on opens the XDG desktop portal file picker, and the
+   portal exports **only the single file selected**, at a synthetic path
+   `/run/user/$UID/doc/<id>/manifest.json`. Firefox takes that directory as
+   the extension root. It contains nothing but `manifest.json`, so the
+   manifest parses and the extension installs with a working toolbar button,
+   while `popup.html`, `popup.js` and `icons/` are simply absent. A missing
+   popup document renders as an empty one, with nothing to log — and an empty
+   document has no layout size, hence the ~30px panel.
+
+   Confirmed directly, without attaching to the running browser:
+
+   ```console
+   $ flatpak documents --columns=all org.mozilla.firefox
+   90ed68dd  /run/user/1000/doc/90ed68dd/manifest.json  /home/ole/workspace/dotfiles/qr-lan/extension/manifest.json  ...
+   $ ls /run/user/1000/doc/90ed68dd/
+   manifest.json
+   ```
+
+   Chrome is unaffected because *Load unpacked* uses a **directory** picker,
+   so the portal exports the whole tree. Granting the sandbox the repo
+   (`--filesystem=<repo>:ro`, which `theme-cli`'s Firefox surface already
+   does) does not help: the problem is not permission on the real path, it is
+   that Firefox was handed the portal path instead of the real one.
+
+   Fix: `package.sh` zips `extension/` into `dist/qr-lan.xpi`, and Firefox
+   loads *that*. One file, so the portal export is self-contained.
+   `about:debugging` accepts an `.xpi`/`.zip` for temporary loading with no
+   signature check. `web-ext run --source-dir` is the other way out, since it
+   hands Firefox the real path and never touches the portal.
+
+   Everything tried before this diagnosis was aimed at a phantom and none of
+   it mattered: inlining `popup.css` into a `<style>` block, reserving the
+   footprint with `min-height`, declaring all three states as static markup
+   toggled by `data-state`, and adding `icons/icon-*.png`. Those changes are
+   kept — they are defensible on their own and the popup works with them —
+   with one exception. The redundant inline `style="background: #fffaf3"` on
+   `<body>` was **removed**: inline styles outrank the stylesheet, so it
+   pinned the popup to the light background and broke dark mode. The lesson
+   worth keeping: when a browser shows an empty document and logs nothing,
+   suspect the file it loaded, not the file you wrote.
 
 What needed no change: the loopback `fetch` (the popup is a `moz-extension:`
 page making an ordinary non-credentialed cross-origin request, and the companion
-already answers `Access-Control-Allow-Origin: *`), `activeTab`, the `action`
-popup, the `Alt+Shift+Q` command, and the CSS.
+already answers `Access-Control-Allow-Origin: *`), `activeTab`, and the
+`action` popup mechanism itself.
 
 Verified with `addons-linter` (0 errors, 0 warnings) plus a Playwright harness
 that renders `popup.html` against a stubbed `browser`/`chrome` pair in both
-shapes and checks the QR, the copy label, and all three failure states.
+shapes and checks the QR, the copy label, and all three failure states. Note
+this harness renders `popup.html` directly as a page — it does not exercise
+the real WebExtension popup-panel sizing path, which is exactly what missed
+issue 4 above; that one needed an actual `about:debugging` load to surface.
 
 ### The install asymmetry
 
@@ -80,7 +130,20 @@ manifest. Chrome's load-unpacked is permanent. Firefox's equivalent,
 restart, and release and beta Firefox refuse unsigned add-ons permanently.
 A restart-surviving install therefore needs either AMO signing or Developer
 Edition / Nightly / ESR with `xpinstall.signatures.required = false`.
-`install.sh` prints both options and does not choose for you.
+
+On this machine only the first is actually available. Firefox here is 154
+stable from the Fedora flatpak remote, and release builds ignore
+`xpinstall.signatures.required` entirely — the pref is honoured only by
+Developer Edition, Nightly and ESR. Neither Flathub nor Fedora ships a
+Developer Edition or Nightly flatpak, so that branch means a tarball install
+outside Flatpak, which is a bigger change than the problem justifies. Hence
+`sign.sh`.
+
+A Flatpak Firefox adds a second cost on top: the temporary add-on has to be
+loaded as a packaged `.xpi` rather than as a loose directory, because the
+portal file picker only ever exports one file (Firefox support item 4). So
+every edit needs a `package.sh` re-run and a re-load, where Chrome needs only
+a re-load — unless you iterate through `web-ext run`, which sidesteps both.
 
 ## Layout
 
@@ -89,10 +152,13 @@ qr-lan/
   companion/src/main.rs     axum server, /qr handler, PORT constant
   companion/src/lan.rs      default-route source IP
   companion/src/rewrite.rs  loopback-host rewrite + its tests
-  extension/                MV3 manifest (Chrome + Firefox), popup HTML/CSS/JS
+  extension/                MV3 manifest (Chrome + Firefox), popup HTML (CSS inlined) + JS, icons/
   service/qr-lan.service    systemd --user unit (Linux)
   service/de.pixelwerte.qr-lan.plist  LaunchAgent (macOS)
-  install.sh                build, symlink, enable, print per-browser load steps
+  package.sh                zip extension/ -> dist/qr-lan.xpi (for Flatpak Firefox)
+  sign.sh                   opt-in: AMO-sign extension/ -> dist/*.xpi (permanent install)
+  install.sh                build, symlink, enable, package, print per-browser load steps
+  dist/                     build output, gitignored
 ```
 
 ## Install
@@ -101,14 +167,40 @@ qr-lan/
 qr-lan/install.sh
 ```
 
-Then load the extension, once per machine per browser. Shortcut in both:
-`Alt+Shift+Q`.
+Then load the extension, once per machine per browser. No keyboard shortcut is
+bound by default — assign one under `about:addons` → Manage Extension Shortcuts,
+or `chrome://extensions/shortcuts`.
 
 - **Chrome/Chromium:** `chrome://extensions` → Developer mode → Load unpacked →
   `qr-lan/extension`. Permanent.
 - **Firefox:** `about:debugging#/runtime/this-firefox` → Load Temporary Add-on →
-  `qr-lan/extension/manifest.json`. Gone on restart — see the install asymmetry
-  above for the permanent alternatives.
+  `qr-lan/dist/qr-lan.xpi` (built by `install.sh`, or `qr-lan/package.sh` on its
+  own after an edit). **Pick the `.xpi`, not `extension/manifest.json`** — see
+  Firefox support item 4. Gone on restart; see the install asymmetry above for
+  the permanent alternatives.
+- **Firefox, while iterating:** `web-ext run --source-dir qr-lan/extension`
+  reloads on save and skips the portal and the repackaging step entirely.
+
+### Permanent Firefox install (signing)
+
+Opt-in, and not part of `install.sh`. Get a JWT issuer and secret once from
+<https://addons.mozilla.org/developers/addon/api/key/>, then:
+
+```bash
+export AMO_JWT_ISSUER=user:12345678:123
+export AMO_JWT_SECRET=...
+qr-lan/sign.sh
+```
+
+Then `about:addons` → gear → Install Add-on From File → the `dist/*.xpi` it
+wrote. Survives restarts; remove the temporary add-on from `about:debugging`
+first.
+
+`sign.sh` refuses to run if `dist/` already holds a signed `.xpi` for the
+current `manifest.json` version, because AMO rejects a re-used version several
+seconds into the upload. So each update is: bump `version`, `sign.sh`,
+re-install. That bump-and-re-sign cycle is the whole reason this is not the
+default path.
 
 Two implementation notes worth remembering:
 
@@ -127,10 +219,18 @@ Two implementation notes worth remembering:
   start command.
 - **No config file, flags, or env vars.** The port is a constant duplicated in
   the Rust source and the popup JS.
-- **No AMO submission, signing pipeline, or packaged release.** That would put
-  a Mozilla review step and a re-sign on every edit between this repo and a
-  working browser, which is the opposite of what a dotfiles checkout is for.
-  The consequence is accepted: on release Firefox this is a temporary add-on.
+- **No signing on the default path.** `sign.sh` exists (see Signing below) but
+  nothing calls it: `install.sh` does not sign, and the documented Firefox
+  install is still the temporary `.xpi`. Putting a Mozilla round trip and a
+  version bump between an edit and a working browser is the opposite of what a
+  dotfiles checkout is for. Signing is the opt-in escape hatch for when the
+  per-restart reload becomes more annoying than the re-sign, not the norm.
+- **No AMO listing.** Signing uses the `unlisted` channel — self-distribution,
+  no public add-on page, no human review. This extension is useless without
+  the companion daemon on the same machine, so there is nobody to list it for.
+- **No `update_url`.** A self-distributed add-on can advertise an update
+  manifest and auto-update itself; that would mean hosting one. Re-running
+  `sign.sh` and re-installing is fine at this frequency.
 - **No `webextension-polyfill`.** One API call does not justify vendoring a
   dependency into a repo with no build step.
 - **No tunnels, HTTPS, or auth.** Same-LAN plain HTTP only.

@@ -37,6 +37,9 @@ case "$(uname -s)" in
     ;;
 esac
 
+echo "==> packaging extension"
+xpi="$("$repo/package.sh")"
+
 cat <<EOF
 
 ==> done
@@ -50,13 +53,26 @@ Chrome/Chromium — survives restarts:
 
 Firefox — pick one:
   a) about:debugging#/runtime/this-firefox -> Load Temporary Add-on ->
-     $repo/extension/manifest.json
-     Zero setup, but gone on every browser restart.
-  b) Developer Edition, Nightly or ESR only: set
-     xpinstall.signatures.required = false in about:config, then install
-     $repo/extension as an unpacked add-on. Survives restarts.
-  Release and Beta Firefox refuse unsigned add-ons permanently, so (a) is
-  the only option there short of signing the extension through AMO.
+     $xpi
+     Pick the .xpi, NOT extension/manifest.json. Under a Flatpak Firefox the
+     file picker goes through the XDG desktop portal, which exports only the
+     one file you select — picking the manifest gives Firefox an extension
+     root containing nothing else, and the popup renders empty with no error.
+     Re-run package.sh after editing the extension. Gone on browser restart.
+  b) web-ext run --source-dir $repo/extension
+     Loads from the directory, bypassing the portal entirely, and reloads on
+     save. Best for iterating. Needs the repo readable by the sandbox:
+     flatpak override --user --filesystem=$repo:ro org.mozilla.firefox
+  c) Permanent, on any channel: AMO-sign it, then install from about:addons.
+       export AMO_JWT_ISSUER=... AMO_JWT_SECRET=...   # addons.mozilla.org
+       $repo/sign.sh
+     Survives restarts. Costs a version bump + re-sign per edit, so (a)/(b)
+     stay the better loop while iterating.
+  Release and Beta Firefox refuse unsigned add-ons permanently and ignore
+  xpinstall.signatures.required, so (c) is the only permanent option there.
+  Developer Edition, Nightly and ESR can instead set that pref to false in
+  about:config and install the unsigned .xpi directly.
 
-Shortcut in both: Alt+Shift+Q
+Keyboard shortcut: none by default — assign one under about:addons ->
+Manage Extension Shortcuts (Firefox) or chrome://extensions/shortcuts.
 EOF

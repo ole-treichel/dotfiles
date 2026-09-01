@@ -2,11 +2,112 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
-    <link rel="stylesheet" href="popup.css" />
+    <style>
+      :root {
+        color-scheme: light dark;
+        --fg: #1c1b1a;
+        --muted: #6f6b66;
+        --bg: #fffaf3;
+      }
+
+      @media (prefers-color-scheme: dark) {
+        :root {
+          --fg: #e0def4;
+          --muted: #908caa;
+          --bg: #191724;
+        }
+      }
+
+      /* Firefox sizes the popup from <body>'s layout size, not :root — MDN is
+         explicit that width must be set on body, not html
+         (https://developer.mozilla.org/docs/Mozilla/Add-ons/WebExtensions/user_interface/Popups#popup_resizing).
+         min-height reserves the final footprint so the panel doesn't visibly
+         resize when the QR lands after the companion fetch resolves. */
+      body {
+        margin: 0;
+        box-sizing: border-box;
+        width: 288px;
+        min-height: 340px;
+        background: var(--bg);
+        color: var(--fg);
+        font: 13px/1.4 system-ui, sans-serif;
+      }
+
+      #app {
+        box-sizing: border-box;
+        min-height: 340px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 12px;
+        padding: 16px;
+      }
+
+      #app > [data-view] {
+        display: none;
+      }
+
+      #app[data-state="loading"] > [data-view="loading"],
+      #app[data-state="error"] > [data-view="error"] {
+        display: block;
+        margin: 0;
+        padding: 24px 0;
+        color: var(--muted);
+        text-align: center;
+      }
+
+      #app[data-state="qr"] > [data-view="qr"] {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 12px;
+      }
+
+      /* The QR is rendered black-on-white; keep it that way in dark mode so
+         the contrast a camera needs survives. */
+      .qr {
+        background: #ffffff;
+        border-radius: 6px;
+        padding: 8px;
+        width: 256px;
+        height: 256px;
+        box-sizing: border-box;
+        line-height: 0;
+      }
+
+      .qr svg {
+        display: block;
+        width: 100%;
+        height: 100%;
+      }
+
+      .url {
+        width: 100%;
+        padding: 0;
+        border: 0;
+        background: none;
+        color: inherit;
+        font: inherit;
+        font-family: ui-monospace, monospace;
+        text-align: center;
+        word-break: break-all;
+        cursor: pointer;
+      }
+
+      .url:hover {
+        text-decoration: underline;
+      }
+    </style>
   </head>
   <body>
-    <main id="app">
-      <p class="status">…</p>
+    <main id="app" data-state="loading">
+      <p data-view="loading">…</p>
+      <p data-view="error"></p>
+      <div data-view="qr">
+        <div class="qr"></div>
+        <button class="url" type="button" title="Copy"></button>
+      </div>
     </main>
     <script src="popup.js"></script>
   </body>

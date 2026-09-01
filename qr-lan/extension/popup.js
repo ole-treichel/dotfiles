@@ -9,37 +9,36 @@ const PORT = 48213;
 const ext = globalThis.browser ?? globalThis.chrome;
 
 const app = document.getElementById("app");
+const errorView = app.querySelector('[data-view="error"]');
+const qrFrame = app.querySelector(".qr");
+const urlButton = app.querySelector(".url");
 
-function showStatus(text) {
-  app.replaceChildren(Object.assign(document.createElement("p"), { className: "status", textContent: text }));
+function showError(text) {
+  errorView.textContent = text;
+  app.dataset.state = "error";
 }
 
-function show(url, svgSource) {
+function showQr(url, svgSource) {
   // Parsed as XML rather than assigned through innerHTML: the SVG is data from
   // the companion, not markup for this page.
   const svg = new DOMParser().parseFromString(svgSource, "image/svg+xml").documentElement;
-  const frame = document.createElement("div");
-  frame.className = "qr";
-  frame.append(svg);
+  qrFrame.replaceChildren(svg);
 
-  const label = document.createElement("button");
-  label.className = "url";
-  label.textContent = url;
-  label.title = "Copy";
-  label.addEventListener("click", async () => {
+  urlButton.textContent = url;
+  urlButton.onclick = async () => {
     await navigator.clipboard.writeText(url);
-    label.textContent = "copied";
-    setTimeout(() => (label.textContent = url), 800);
-  });
+    urlButton.textContent = "copied";
+    setTimeout(() => (urlButton.textContent = url), 800);
+  };
 
-  app.replaceChildren(frame, label);
+  app.dataset.state = "qr";
 }
 
 async function main() {
   const [tab] = await ext.tabs.query({ active: true, currentWindow: true });
   const url = tab?.url ?? "";
   if (!/^https?:/.test(url)) {
-    showStatus("Can't share this page");
+    showError("Can't share this page");
     return;
   }
 
@@ -47,16 +46,18 @@ async function main() {
   try {
     response = await fetch(`http://127.0.0.1:${PORT}/qr?url=${encodeURIComponent(url)}`);
   } catch {
-    showStatus("qr-lan companion is not running");
+    showError("qr-lan companion is not running");
     return;
   }
 
   const body = await response.json().catch(() => null);
   if (!response.ok || !body?.svg) {
-    showStatus(body?.error ?? `Companion returned ${response.status}`);
+    showError(body?.error ?? `Companion returned ${response.status}`);
     return;
   }
-  show(body.url, body.svg);
+  showQr(body.url, body.svg);
 }
 
-main();
+// Belt and suspenders: any exception anywhere above must still land on
+// screen as text, never as a silent failure that leaves the popup blank.
+main().catch((err) => showError(err?.message || "Something went wrong"));
