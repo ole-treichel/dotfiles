@@ -1,0 +1,36 @@
+{
+    "manifest_version": 2,
+    "name": "Everforest Dark",
+    "version": "1.1",
+    "description": "Everforest Dark Medium colorscheme for Mozilla Firefox.",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "everforest-dark@theme-cli"
+        }
+    },
+    "theme": {
+        "colors": {
+            "frame": "rgb(45, 53, 59)",
+            "frame_inactive": "rgb(45, 53, 59)",
+            "toolbar": "rgb(52, 63, 68)",
+            "toolbar_text": "rgb(211, 198, 170)",
+            "icons": "rgb(211, 198, 170)",
+            "tab_background_text": "rgb(122, 132, 120)",
+            "tab_loading": "rgb(167, 192, 128)",
+            "tab_line": "rgb(167, 192, 128)",
+            "toolbar_field": "rgb(45, 53, 59)",
+            "toolbar_field_text": "rgb(211, 198, 170)",
+            "toolbar_field_border_focus": "rgb(167, 192, 128)",
+            "toolbar_field_highlight": "rgb(167, 192, 128)",
+            "toolbar_field_highlight_text": "rgb(45, 53, 59)",
+            "popup": "rgb(52, 63, 68)",
+            "popup_text": "rgb(211, 198, 170)",
+            "popup_border": "rgb(133, 146, 137)",
+            "popup_highlight": "rgb(167, 192, 128)",
+            "popup_highlight_text": "rgb(45, 53, 59)",
+            "ntp_background": "rgb(61, 72, 77)",
+            "ntp_text": "rgb(167, 192, 128)",
+            "ntp_link": "rgb(127, 187, 179)"
+        }
+    }
+}
