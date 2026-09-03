@@ -2,7 +2,7 @@
 # tms-layout — give a freshly created tmux session the standard 3-window layout:
 #
 #   1 nvim   vertical split, `nvim .` on top (~75%), bare shell below (~25%)
-#   2 git    vertical split, lazygit on top, `hunk diff --watch` below
+#   2 git    lazygit, single pane
 #   3 ai     shell running claude
 #
 # Everything runs inside a normal shell, so quitting an app leaves a prompt.
@@ -71,12 +71,10 @@ editor=$(tmux list-panes -t "$window" -F '#{pane_id}' | head -1)
 tmux split-window -v -l 25% -c "$path" -t "$editor"
 tmux send-keys -t "$editor" 'nvim .' Enter
 
-# Window 2: lazygit on top, `hunk diff --watch` below.
+# Window 2: lazygit, single pane.
 window=$(tmux new-window -a -d -t "$window" -n git -c "$path" -P -F '#{window_id}')
 lazygit_pane=$(tmux list-panes -t "$window" -F '#{pane_id}' | head -1)
 tmux send-keys -t "$lazygit_pane" lazygit Enter
-hunk_pane=$(tmux split-window -v -c "$path" -t "$lazygit_pane" -P -F '#{pane_id}')
-tmux send-keys -t "$hunk_pane" 'hunk diff --watch' Enter
 
 # Window 3: shell running claude.
 window=$(tmux new-window -a -d -t "$window" -n ai -c "$path" -P -F '#{window_id}')

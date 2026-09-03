@@ -6,7 +6,7 @@ tmux session opens as:
 | # | name | contents |
 | --- | --- | --- |
 | 1 | `nvim` | vertical split — `nvim .` on top (~75%), bare shell below (~25%) |
-| 2 | `git` | vertical split — `lazygit` on top, `hunk diff --watch` below |
+| 2 | `git` | `lazygit`, single pane |
 | 3 | `ai` | shell running `claude` |
 
 Status: implemented. `./tms/install.sh` links `~/.local/bin/tms-layout` and
@@ -67,7 +67,7 @@ it never touches a session while the script is building it.
 | Trigger | `set-hook -g session-created` with `run-shell -b`, so it never blocks the tmux server |
 | Scope | Every new session, tms-made or hand-made. tms only ever creates sessions under `~/workspace` anyway, and a manual session in a repo wants the same layout |
 | Default session | Skipped, by name, read from tms's `default_session` (`workspace`) rather than hardcoded — it is a landing spot, not a project |
-| Apps in shells | `nvim`/`lazygit`/`hunk diff --watch`/`claude` are typed into normal shells, not run as the window command. Quitting any of them leaves a usable prompt with the command in history, instead of destroying the window |
+| Apps in shells | `nvim`/`lazygit`/`claude` are typed into normal shells, not run as the window command. Quitting any of them leaves a usable prompt with the command in history, instead of destroying the window |
 | Window names | Set with `-n` / `rename-window`, which also switches off tmux's automatic renaming, so window 2 stays `git` and does not become `lazygit` |
 | Focus | Window 1, top pane |
 | Idempotency | Refuses when the target session already has more than one window or pane |
