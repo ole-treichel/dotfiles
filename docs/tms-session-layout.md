@@ -60,6 +60,43 @@ There is no race for the sessions that *are* laid out: tms's `set_up_tmux_env`
 returns early for linked worktrees and for non-bare repos without worktrees, so
 it never touches a session while the script is building it.
 
+## Claude's trust dialog
+
+Window 3 starts `claude` in a directory it has usually never seen, so every new
+project opened the session with *"Do you trust the files in this folder?"*.
+
+There is **no flag that skips only that dialog**. Checked against Claude Code
+2.1.263, three things suppress it, and all three cost more than they are worth
+here:
+
+| Escape hatch | Why not |
+| --- | --- |
+| `-p` / non-TTY stdout | Documented in `--help`, but that is print mode, not an interactive session |
+| `--dangerously-skip-permissions` | Disables *every* permission check, not just trust — the auto-mode classifier goes with it |
+| `CLAUDE_CODE_SANDBOXED=1` | Internal escape hatch that changes other assumptions about the environment |
+
+Trust is per directory, stored in `~/.claude.json` as
+`projects["<realpath>"].hasTrustDialogAccepted`. It *is* inherited from ancestor
+directories, but the walk up stops at the enclosing git root — so trusting
+`~/workspace` once covers plain directories under it and **not** the repos
+inside it, which is every project that matters. There is no once-and-for-all
+answer to give.
+
+So `tms-layout` writes the key itself, for the session path only, just before it
+types `claude`. The permission model is untouched: only the "is this directory
+mine?" question is pre-answered, and only for directories that reached the
+script because they were picked in tms.
+
+`pretrust_claude` is deliberately best-effort — it returns 0 without `jq`,
+without a writable `~/.claude.json`, or if the path does not resolve, and it
+writes through `mktemp` + `mv` at mode 600 so a failed `jq` can never truncate
+the config. A Claude session running elsewhere holds the same file and can
+rewrite it from its own in-memory copy, dropping the key; the cost of losing
+that race is the dialog appearing once. Not worth a lock file.
+
+The path is written as `pwd -P` output, because Claude keys the config on the
+resolved realpath of its cwd.
+
 ## Decisions
 
 | Area | Decision |
@@ -71,6 +108,7 @@ it never touches a session while the script is building it.
 | Window names | Set with `-n` / `rename-window`, which also switches off tmux's automatic renaming, so window 2 stays `git` and does not become `lazygit` |
 | Focus | Window 1, top pane |
 | Idempotency | Refuses when the target session already has more than one window or pane |
+| Claude trust | Pre-answered per session path in `~/.claude.json`, not `--dangerously-skip-permissions`. Only the trust question is skipped; permission prompts stay |
 | Language | bash. It is a dozen tmux calls; `wt`'s Rust treatment would be ceremony |
 | Install | `tms/install.sh` symlinks `~/.local/bin/tms-layout` and `~/.config/tms/config.toml`, same pattern as `wt` and `qr-lan` minus the build step |
 

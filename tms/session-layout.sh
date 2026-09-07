@@ -76,7 +76,33 @@ window=$(tmux new-window -a -d -t "$window" -n git -c "$path" -P -F '#{window_id
 lazygit_pane=$(tmux list-panes -t "$window" -F '#{pane_id}' | head -1)
 tmux send-keys -t "$lazygit_pane" lazygit Enter
 
+# Claude asks "do you trust the files in this folder?" the first time it runs in
+# a directory. Trust lives per-directory in ~/.claude.json, and its ancestor walk
+# stops at the enclosing git root — so trusting ~/workspace once does not cover
+# the repos inside it, and every new project asks again. tms only ever opens
+# directories I picked myself, so answer it up front.
+#
+# Best effort: skipped without jq or a writable config, and a Claude session
+# running elsewhere can rewrite the file and drop the key. Worst case the dialog
+# shows up once.
+pretrust_claude() {
+  local dir=$1 real cfg tmp
+  command -v jq >/dev/null 2>&1 || return 0
+  cfg="${CLAUDE_CONFIG_DIR:-$HOME}/.claude.json"
+  [ -f "$cfg" ] && [ -w "$cfg" ] || return 0
+  real=$(cd "$dir" 2>/dev/null && pwd -P) || return 0
+  tmp=$(mktemp "$cfg.XXXXXX") || return 0
+  if jq --arg p "$real" '.projects[$p].hasTrustDialogAccepted = true' "$cfg" >"$tmp" &&
+    [ -s "$tmp" ]; then
+    chmod 600 "$tmp"
+    mv "$tmp" "$cfg"
+  else
+    rm -f "$tmp"
+  fi
+}
+
 # Window 3: shell running claude.
+pretrust_claude "$path"
 window=$(tmux new-window -a -d -t "$window" -n ai -c "$path" -P -F '#{window_id}')
 tmux send-keys -t "$window" claude Enter
 
