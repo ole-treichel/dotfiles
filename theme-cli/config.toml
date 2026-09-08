@@ -22,14 +22,16 @@ flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
 # app_name = "Chromium"
 
 [firefox]
+# DEACTIVATED — see docs/theme-firefox.md. `web-ext run --keep-profile-changes`
+# dumps a 72-line test-harness user.js into the target profile (safebrowsing
+# off, password saving off, session restore off, updates off, remote debugging
+# on, unsigned xpinstall on). Not an acceptable trade-off for a daily driver.
+# Both IDs stay empty so the surface no-ops on Linux and macOS.
 # Linux: Flatpak app ID. Leave empty ("") to disable.
-flatpak_app_id = "org.mozilla.firefox"
+flatpak_app_id = ""
 # macOS: app name for `open -a`/`osascript`. Leave empty ("") to disable.
 # app_name = "Firefox"
 # Firefox profile name (as shown in about:profiles) to load the theme into.
-# Applied via `web-ext run --keep-profile-changes`, which makes destructive,
-# insecure-for-daily-use changes to this profile (enables silent remote
-# debugging connections, etc) — accepted trade-off for using the real profile.
 profile = "default-release"
 
 [ghostty]
