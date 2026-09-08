@@ -2,6 +2,7 @@ mod cmd;
 mod config;
 mod git;
 mod hooks;
+mod moco;
 mod picker;
 mod repo;
 mod slug;
@@ -19,10 +20,11 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Command {
-    /// Create a branch + worktree, scaffold it, push, open a draft PR
+    /// Create a branch + worktree, scaffold it, push, open a draft PR.
+    /// No words opens the wizard; words are used as given (scratch branch)
     New {
-        /// Words that become the branch and directory name
-        #[arg(required = true, num_args = 1..)]
+        /// Words that become the branch and directory name, verbatim
+        #[arg(num_args = 0..)]
         words: Vec<String>,
         /// Base the branch on this ref instead of origin/HEAD
         #[arg(long, value_name = "REF")]

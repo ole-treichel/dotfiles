@@ -27,7 +27,7 @@ error.
 ## Commands
 
 ```
-wt new <words...> [--from <ref>]   create branch + worktree, scaffold, push, PR
+wt new [words...] [--from <ref>]   create branch + worktree, scaffold, push, PR
 wt get [branch]                    check out an existing remote branch
 wt rm  [dir...]                    remove worktree(s) + local branch(es)
 wt ls                              table of worktrees
@@ -35,6 +35,9 @@ wt clone <url> [name]              build the .bare layout from scratch
 wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
 wt open                            open the repo on GitHub
 ```
+
+`wt new` with no argument opens a three-step wizard that builds the branch
+name around a MOCO project number: [wt-new-wizard.md](wt-new-wizard.md).
 
 `wt get` and `wt rm` with no argument open a ratatui picker, both multi-select.
 `wt get` lists remote branches that have no worktree and checks out every one
@@ -47,14 +50,15 @@ a y/N confirmation before anything is deleted.
 
 | Area | Decision |
 | --- | --- |
-| Naming | `slug` = lowercase, every run of non-alphanumerics collapsed to a single `-`, trimmed. Directory name is **always** `slug(branch)` |
-| `wt new` branch name | The slug itself. `wt new "Feat: Cookie Banner!!"` → branch and dir `feat-cookie-banner`. No auto `feat-` prefix — you type the prefix you want |
+| Naming | `slug` = lowercase, ä ö ü ß spelled out, every run of remaining non-alphanumerics collapsed to a single `-`, trimmed. Directory name is **always** `slug(branch)` |
+| `wt new` branch name | No words: the wizard builds `<prefix>-<description>-p<number>` from a MOCO project. Words: the slug itself, verbatim, the escape hatch for scratch branches. Details: [wt-new-wizard.md](wt-new-wizard.md) |
 | `wt get` branch name | Verbatim. A remote branch `feat/master-product-data-table` keeps its name; only the directory is slugged to `feat-master-product-data-table` |
 | Existing worktrees | Never re-derived. `git worktree list --porcelain` is the authoritative dir↔branch map, which is why the legacy `feat-website-in-sign-up-mail` ↔ `feat-website-in-signup-mail/` mismatch is harmless |
 | Collisions | Hard error, never an auto-suffix. Two branches slugging to the same directory is a mistake worth surfacing |
 | Base ref | `git fetch origin`, then branch from `refs/remotes/origin/HEAD`. `--from <ref>` for stacked branches |
 | `wt rm` | Remove worktree → delete local branch → `git worktree prune` → `tms refresh`. Refuses on dirty tree or unpushed commits; `--force` overrides. Prints what is about to go and waits for y/N; `--yes` skips the prompt |
 | Remote branches | Never deleted. GitHub deletes on merge |
+| Picker matching | Fuzzy subsequence with scoring, shared by every picker. Typed letters need only appear in order; runs and word starts rank above scattered hits |
 | tms | `tms refresh` after `new`, `get`, `rm`. Nothing else — no session creation, no window management |
 | git access | Shell out to `git`. `git2`'s worktree API is thin and this is a wrapper, not a reimplementation |
 | Install | `wt/` in this repo, `cargo build --release`, symlink `~/.local/bin/wt`, same as `qr-lan` |
@@ -82,7 +86,8 @@ lives in shell dropins in this repo, next to the CLI:
 wt/hooks/post-create.d/
   05-seed-env.sh          copy gitignored .env* from main/
   10-scaffold-docs.sh     docs/<slug>/prd.md + knowledge.md
-  30-commit-push-pr.sh    commit "init", push -u, gh pr create
+  30-commit-push-pr.sh    commit "init" if anything was scaffolded, always
+                          push -u, gh pr create once ahead of the base
 ```
 
 Contract:
