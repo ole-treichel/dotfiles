@@ -1,3 +1,4 @@
+require 'config.ts-compat'
 require 'config.lazy'
 require 'config.remap'
 require 'config.set'
