@@ -19,24 +19,6 @@ return {
       },
     })
 
-    -- Rust: keep cargo check from starving the desktop
-    vim.lsp.config('rust_analyzer', {
-      -- lowest CPU priority; spawned cargo/rustc inherit it
-      cmd = { 'nice', '-n', '19', 'rust-analyzer' },
-      settings = {
-        ['rust-analyzer'] = {
-          -- separate target dir: no lock contention / rebuild thrash with manual builds
-          cargo = { targetDir = true },
-          check = {
-            extraArgs = { '--jobs', '10' },
-            workspace = false, -- check current package only
-          },
-          cachePriming = { numThreads = 4 },
-          numThreads = 4,
-        },
-      },
-    })
-
     -- HTML (with extended filetypes)
     vim.lsp.config('html', {
       filetypes = {
