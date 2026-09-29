@@ -1,0 +1,91 @@
+# .bashrc
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+    . /etc/bashrc
+fi
+
+# User specific environment
+if ! [[ "$PATH" =~ "$HOME/.local/bin:$HOME/bin:" ]]; then
+    PATH="$HOME/.local/bin:$HOME/bin:$PATH"
+fi
+export PATH
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+# User specific aliases and functions
+if [ -d ~/.bashrc.d ]; then
+    for rc in ~/.bashrc.d/*; do
+        if [ -f "$rc" ]; then
+            . "$rc"
+        fi
+    done
+fi
+unset rc
+
+eval "$(starship init bash)"
+
+export VOLTA_HOME="$HOME/.volta"
+export PATH="$VOLTA_HOME/bin:$PATH"
+
+export PATH=$PATH:/usr/local/go/bin
+export GOPATH="$HOME/go"
+PATH="$GOPATH/bin:$PATH"
+
+. "$HOME/.cargo/env"
+
+alias w='cd ~/workspace'
+alias la='ls -all'
+alias o='xdg-open .'
+alias r='cd $(git rev-parse --show-toplevel)'
+# alias claude='npx @anthropic-ai/claude-code'
+
+tunnel() {
+  ssh -R 80:localhost:$1 localhost.run
+}
+
+serve() {
+  python3 -m http.server "${1:-8000}"
+}
+
+# If not running interactively, do not do anything
+[[ $- != *i* ]] && return
+# Otherwise start tmux
+[[ -z "$TMUX" ]] && exec tmux new-session -A -s workspace
+
+export QT_NO_THREADED_WINDOW_CHECKS=1
+
+export DOCKER_GATEWAY_HOST=172.17.0.1
+export ANDROID_HOME=~/Android
+export NDK_HOME=~/Android/Sdk/ndk/27.1.12297006
+
+export PATH=${PATH}:$ANDROID_HOME/tools:$ANDROID_HOME/platform-tools
+export PATH=$PATH:/opt/gradle/gradle-8.10.2/bin
+export PATH=$PATH:/home/ole/devproxy
+export PATH=$PATH:/home/ole/.spicetify
+export PATH=$PATH:/home/ole/.local/bin
+eval "$(zoxide init bash)"
+
+. "/home/ole/.deno/env"
+source /home/ole/.local/share/bash-completion/completions/deno.bash
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+
+# opencode
+export PATH=/home/ole/.opencode/bin:$PATH
+
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/home/ole/.lmstudio/bin"
+# End of LM Studio CLI section
+
+
+# Added by the Hunk installer (https://hunk.dev)
+export PATH='/home/ole/.hunk/bin':"$PATH"
+
+alias scratch='nvim -c "setlocal buftype=nofile bufhidden=wipe noswapfile" -'
+
+# Private config (secrets, hosts); not in repo
+[ -r ~/.bashrc.private ] && . ~/.bashrc.private

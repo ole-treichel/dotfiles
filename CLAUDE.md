@@ -26,6 +26,8 @@ This is a personal dotfiles repository containing configuration files for variou
   - Searches `/home/ole/workspace` directory (depth 3)
   - Tmux keybinds: `prefix+p` (tms), `prefix+s` (tms switch)
 
+- **Bash** (`bash/bashrc`): symlinked to `~/.bashrc`, public only. Secrets/hosts go in `~/.bashrc.private` (not in repo, sourced last). See `docs/bash-split.md`.
+
 - **Terminal Themes** (`gnome-terminal/`): Rose Pine theme for GNOME Terminal
 
 ### Key Configuration Details
