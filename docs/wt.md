@@ -51,7 +51,7 @@ a y/N confirmation before anything is deleted.
 | Area | Decision |
 | --- | --- |
 | Naming | `slug` = lowercase, ä ö ü ß spelled out, every run of remaining non-alphanumerics collapsed to a single `-`, trimmed. Directory name is **always** `slug(branch)` |
-| `wt new` branch name | No words: the wizard builds `<prefix>-<description>-p<number>` from a MOCO project. Words: the slug itself, verbatim, the escape hatch for scratch branches. Details: [wt-new-wizard.md](wt-new-wizard.md) |
+| `wt new` branch name | No words: the wizard builds `<prefix>-<description>-p<number>` from a MOCO project; `scratch-<description>` drops the number when no project is picked. Words: the slug itself, verbatim, the escape hatch. Details: [wt-new-wizard.md](wt-new-wizard.md) |
 | `wt get` branch name | Verbatim. A remote branch `feat/master-product-data-table` keeps its name; only the directory is slugged to `feat-master-product-data-table` |
 | Existing worktrees | Never re-derived. `git worktree list --porcelain` is the authoritative dir↔branch map, which is why the legacy `feat-website-in-sign-up-mail` ↔ `feat-website-in-signup-mail/` mismatch is harmless |
 | Collisions | Hard error, never an auto-suffix. Two branches slugging to the same directory is a mistake worth surfacing |

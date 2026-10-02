@@ -1,6 +1,6 @@
 # SOP: Branchnamen
 
-Jeder Branch trägt die MOCO-Projektnummer am Ende.
+Jeder Branch trägt die MOCO-Projektnummer am Ende. Ausnahme: `scratch`.
 
 ```
 feat-import-button-p26059
@@ -10,7 +10,7 @@ prefix   thema     projektnummer
 
 ## Regeln
 
-- **Prefix**: `feat`, `chore`, `fix`. Nichts anderes.
+- **Prefix**: `feat`, `chore`, `fix`, `scratch`. Nichts anderes.
 - **Zeichensatz**: nur `a-z`, `0-9` und `-`. Keine Slashes, keine
   Großbuchstaben, keine Umlaute — `ä`→`ae`, `ö`→`oe`, `ü`→`ue`, `ß`→`ss`.
 - **Projektnummer**: immer am Ende, mit einem Bindestrich abgetrennt,
@@ -27,6 +27,8 @@ prefix   thema     projektnummer
 feat-import-button-p26059
 chore-shopify-theme-p26054
 fix-cookie-banner-p26043
+scratch-cache-poc
+scratch-cache-poc-p26059
 ```
 
 ## Falsch
@@ -39,10 +41,11 @@ feature-import-button-p26059   Prefix gibt es nicht
 feat-größe-anpassen-p26040     Umlaut → feat-groesse-anpassen-p26040
 ```
 
-## Ausnahme: Scratch-Branches
+## Scratch-Branches
 
-Experimente und Wegwerf-Branches brauchen kein Prefix und keine Nummer. Es
-gilt nur der Zeichensatz `[a-z0-9-]`.
+Experimente und Wegwerf-Branches bekommen das Prefix `scratch`. Die
+Projektnummer ist optional: anhängen, wenn das Experiment zu einem Kunden
+gehört, sonst weglassen.
 
 ## Branches über `wt` anlegen
 
@@ -51,12 +54,13 @@ Schritt und kann den Namen nicht falsch bauen.
 
 ```
 wt new              Wizard: Prefix → Thema → MOCO-Projekt → bestätigen
-wt new cache poc    Scratch-Branch, Worte werden nur bereinigt
+                    bei scratch: erste Zeile „no project“ = ohne Nummer
+wt new cache poc    Worte werden nur bereinigt, kein Prefix, keine Nummer
 wt rm               Worktree + lokalen Branch entfernen
 ```
 
 `wt new` braucht `MOCO_API_KEY` in der Shell, sonst kann es die Projektliste
-nicht holen.
+nicht holen. Ohne Key geht nur `scratch` ohne Nummer.
 
 ## Repo
 

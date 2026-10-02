@@ -34,13 +34,15 @@ wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
 
 Run from anywhere inside the repo — `wt` walks up until it finds `.bare/`.
 
-- `wt new` with no words opens a wizard: prefix picker (`feat`/`chore`/`fix`) →
-  description → MOCO project picker → confirm, producing
-  `feat-import-button-p26059`. Needs `MOCO_API_KEY` exported. Design:
-  [`../docs/wt-new-wizard.md`](../docs/wt-new-wizard.md).
+- `wt new` with no words opens a wizard: prefix picker
+  (`feat`/`chore`/`fix`/`scratch`) → description → MOCO project picker →
+  confirm, producing `feat-import-button-p26059`. Needs `MOCO_API_KEY`
+  exported. For `scratch` the project is optional: `no project` is the first
+  row and gives `scratch-cache-poc`; without a token the picker is skipped.
+  Design: [`../docs/wt-new-wizard.md`](../docs/wt-new-wizard.md).
 - `wt new "Feat: Cookie Banner!!"` → branch **and** directory
   `feat-cookie-banner`, based on `origin/HEAD`. Words are used verbatim: no
-  prefix, no project number. This is the escape hatch for scratch branches.
+  prefix, no project number. This is the escape hatch.
 - `wt get feat/master-product-data-table` → branch keeps its name, directory is
   `feat-master-product-data-table`.
 - `wt get` / `wt rm` with no argument open a multi-select picker: type to

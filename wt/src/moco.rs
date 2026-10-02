@@ -39,12 +39,12 @@ pub fn projects() -> Result<Vec<Project>> {
 }
 
 /// Hard failure by design: a branch name without a project number is not the
-/// convention, so there is nothing sensible to fall back to. The scratch path
-/// needs no token.
+/// convention, so there is nothing sensible to fall back to. The wizard's
+/// `scratch` prefix and `wt new <words>` get by without it.
 fn token() -> Result<String> {
     match std::env::var("MOCO_API_KEY") {
         Ok(t) if !t.trim().is_empty() => Ok(t.trim().to_string()),
-        _ => bail!("MOCO_API_KEY is not set — export it, or `wt new <words>` for a scratch branch"),
+        _ => bail!("MOCO_API_KEY is not set"),
     }
 }
 

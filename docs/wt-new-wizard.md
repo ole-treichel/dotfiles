@@ -1,8 +1,9 @@
 # wt new — branch-name wizard
 
 `wt new` with no arguments walks a three-step wizard and produces a branch name
-that carries the MOCO project number. `wt new <words>` keeps its old behaviour
-and is the escape hatch for scratch branches.
+that carries the MOCO project number. The `scratch` prefix makes the project
+optional. `wt new <words>` keeps its old behaviour and is the escape hatch for
+anything outside the convention.
 
 Status: implemented in `wt/`. Part of [wt](wt.md).
 
@@ -11,10 +12,15 @@ Status: implemented in `wt/`. Part of [wt](wt.md).
 ```
 <prefix>-<description>-p<number>
 feat-import-button-p26059
+
+scratch-<description>[-p<number>]
+scratch-cache-poc
+scratch-cache-poc-p26059
 ```
 
 - Charset is exactly `[a-z0-9-]`. No slashes.
-- `prefix` is `feat`, `chore` or `fix`. Nothing else.
+- `prefix` is `feat`, `chore`, `fix` or `scratch`. Nothing else.
+- The project number is required, except on `scratch`.
 - The project number is **last**, separated by a single hyphen, lowercase. Last
   so shell tab-completion on the prefix and description still works.
 - Directory name is `slug(branch)`, which for a conforming branch is the branch
@@ -24,21 +30,24 @@ feat-import-button-p26059
 
 ```
 wt new                    wizard  → feat-import-button-p26059
+wt new  (scratch)         wizard  → scratch-cache-poc
 wt new cache poc          verbatim → cache-poc
 ```
 
 `wt new <words>` adds nothing: no prefix, no project number. The words are
-slugged and used as given. That is the whole point of it — experiments and
-scratch branches that should not be forced through the convention. `slug`
+slugged and used as given. That is the whole point of it — names that should
+not be forced through the convention. Throwaway work that should still read as
+such goes through the wizard's `scratch` prefix. `slug`
 already emits exactly `[a-z0-9-]` with no leading or trailing dash, so the
 escape hatch needs no separate validation.
 
 ## Wizard steps
 
-1. **prefix** — a three-row picker, `feat` / `chore` / `fix`.
+1. **prefix** — a four-row picker, `feat` / `chore` / `fix` / `scratch`.
 2. **description** — typed, then slugged.
 3. **project** — a picker over the active MOCO projects, fuzzy-filtered on
-   customer, project name and number alike.
+   customer, project name and number alike. For `scratch` a `no project` row
+   leads the list, so enter on an untouched filter skips the number.
 4. **confirm** — the assembled name, y/N.
 
 Steps 1–3 all draw the same bordered panel, with the step's title in the top
@@ -52,7 +61,8 @@ border and the same `❯ …▏` input line:
 
 Steps run in the order the name reads, so the title only ever grows to the
 right: `feat-<description>-p…`, then `project for feat-import-button-p…`, then
-the finished name in the confirmation.
+the finished name in the confirmation. For `scratch` the number is bracketed:
+`scratch-<description>[-p…]`.
 
 Step 4 is a plain y/N on the terminal, shaped like `wt rm`'s confirmation:
 
@@ -61,6 +71,9 @@ about to create:
   feat-import-button-p26059  P26059 · VGH Versicherungen
 create this branch? [y/N]
 ```
+
+A scratch branch without a project reads `scratch-cache-poc  no project`, with
+the MOCO error in parentheses if the list could not be fetched.
 
 `Repo::discover()` runs *before* step 1. Walking three steps only to be told
 there is no `.bare/` in this directory would waste all of them.
@@ -91,6 +104,9 @@ there is no `.bare/` in this directory would waste all of them.
 | Area | Decision |
 | --- | --- |
 | Escape hatch | `wt new <words>`, not a `--scratch` flag. The old invocation already *is* the escape hatch — nothing new to remember |
+| `scratch` prefix | A fourth picker row, not a separate command. Experiments that belong to a client still carry the number; those that don't get `scratch-<description>`. The prefix marks the branch as throwaway, which `wt new <words>` output does not |
+| Optional project | A `no project` row first in the same picker, not a y/N before it. One step either way; the common scratch case is a single enter |
+| Scratch without MOCO | No token or MOCO unreachable: the picker is skipped and the branch has no number. The reason is printed in the confirmation, not swallowed. `feat`/`chore`/`fix` still fail hard |
 | Escape-hatch output | `slug(words)`, nothing added. No prefix, no number |
 | Prefix entry | Picker, not typed. Three fixed values; a picker cannot be typo'd |
 | Project number | `slug(identifier)`. `P26059` → `p26059`. Slugged rather than lowercased so an identifier like `P1903-003` still lands inside the charset |
@@ -101,7 +117,7 @@ there is no `.bare/` in this directory would waste all of them.
 | Terminal takeover | One `picker::Session` held across all three steps. `init`/`restore` per step left and re-entered the alternate screen in between, which flashes the shell. The session is dropped before the confirmation, which is deliberately shell output |
 | Retainers | Ordinary rows. MOCO's `isRetainer` flag disagrees with which projects are actually treated as retainers — `P26040 Website Maintenance` is `false`, and the flag marks three others that are not — so pinning by it would mislead |
 | Caching | None. A project created ten minutes ago has to show up |
-| MOCO unreachable, or no token | Hard failure. A branch name without a project number is not the convention, so there is nothing to fall back to. The error names `wt new <words>` as the way out |
+| MOCO unreachable, or no token | Hard failure for `feat`/`chore`/`fix`. A branch name without a project number is not the convention, so there is nothing to fall back to. The error names `scratch` as the way out |
 | Picker matching | Fuzzy subsequence with scoring, replacing the old substring filter — in the *shared* picker, so `wt get`, `wt rm` and `wt vault` change too. Runs and word starts score above scattered hits. Greedy-leftmost, not optimal; a few hundred rows never show the difference |
 | Umlauts | `slug` spells out ä ö ü ß before slugging. Without it `Jubiläum` became `jubil-um`, and the MOCO project names are German. Shared, so `wt new <words>` changes too |
 | Deps | `serde_json` only. No HTTP client, no async runtime |
@@ -122,7 +138,7 @@ there is no `.bare/` in this directory would waste all of them.
 
 ```
 src/moco.rs        projects(), token(), curl + serde_json
-src/cmd/new.rs     wizard(), the three steps, create()
+src/cmd/new.rs     wizard(), the three steps, branch_name(), create()
 src/picker.rs      Session::{pick,prompt} sharing chrome() + input_line();
                    score() + filter(), fuzzy, used by every picker
 src/slug.rs        transliterate() ahead of the slug
