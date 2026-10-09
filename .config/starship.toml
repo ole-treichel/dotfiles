@@ -20,3 +20,6 @@ truncation_length = 1
 
 [package]
 disabled = true
+
+[gcloud]
+disabled = true
