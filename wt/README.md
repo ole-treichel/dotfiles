@@ -30,6 +30,8 @@ wt rm  [dir...] [--force] [--yes]  remove worktree(s) + local branch(es)
 wt ls                              table of worktrees
 wt clone <url> [name]              build the .bare layout from scratch
 wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
+wt open                            open the current branch's PR on GitHub
+wt copy                            copy the current branch's slug to the clipboard
 ```
 
 Run from anywhere inside the repo — `wt` walks up until it finds `.bare/`.
@@ -76,6 +78,11 @@ Run from anywhere inside the repo — `wt` walks up until it finds `.bare/`.
   failure doesn't stop the rest. Needs `vault = "~/…"` in
   `~/.config/wt/config.toml` (linked from `wt/config.toml` by `install.sh`).
   Design: [`../docs/wt-vault.md`](../docs/wt-vault.md).
+
+- `wt open` opens the PR for the worktree's branch (looked up with `gh`). No
+  PR or no `gh` → the branch page. At the workspace root → the default branch.
+- `wt copy` copies the branch slug (`wl-copy` under Wayland, else `xclip`).
+  Same branch resolution as `wt open`.
 
 ## Hooks
 

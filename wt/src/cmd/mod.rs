@@ -1,4 +1,5 @@
 pub mod clone;
+pub mod copy;
 pub mod get;
 pub mod ls;
 pub mod new;

@@ -157,6 +157,29 @@ impl Repo {
             .ok_or_else(|| anyhow!("unexpected origin/HEAD: {r}"))
     }
 
+    /// Branch for cwd: the default branch at the workspace root, else the
+    /// branch of the worktree containing cwd (a subdirectory counts).
+    /// Matched against `checkouts()` rather than `git branch --show-current`,
+    /// which only answers for cwd itself.
+    pub fn current_branch(&self) -> Result<String> {
+        let cwd = env::current_dir().context("reading current directory")?;
+        let cwd = cwd.canonicalize().unwrap_or(cwd);
+        let root = self.root.canonicalize().unwrap_or_else(|_| self.root.clone());
+        if cwd == root {
+            return self.default_branch();
+        }
+        for w in self.checkouts()? {
+            let path = w.path.canonicalize().unwrap_or_else(|_| w.path.clone());
+            if cwd == path || cwd.starts_with(&path) {
+                let name = w.name();
+                return w
+                    .branch
+                    .ok_or_else(|| anyhow!("{name} is on a detached HEAD, not a branch"));
+            }
+        }
+        bail!("{} is not a known worktree — `wt ls` lists them", cwd.display());
+    }
+
     pub fn local_branch_exists(&self, branch: &str) -> bool {
         git::ok(
             &self.root,

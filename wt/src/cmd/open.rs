@@ -1,45 +1,55 @@
-use std::env;
 use std::process::{Command, Stdio};
 
 use anyhow::{anyhow, bail, Context, Result};
 
 use crate::repo::Repo;
 
-/// Open the repo on GitHub: the checked-out branch when run from inside a
-/// worktree, the default branch when run from the workspace root.
+/// Open the current branch's PR on GitHub. Falls back to the branch page when
+/// there is no PR to open: at the workspace root (default branch), or when
+/// `gh` finds none.
 pub fn run() -> Result<()> {
     let repo = Repo::discover()?;
-    let branch = current_branch(&repo)?;
-    let web_root = github_web_root(&repo.origin_url()?)?;
-    let url = format!("{web_root}/tree/{branch}");
+    let branch = repo.current_branch()?;
+    let path = github_path(&repo.origin_url()?)?;
+    let tree = format!("https://github.com/{path}/tree/{branch}");
+
+    let url = if branch == repo.default_branch()? {
+        tree
+    } else {
+        match pr_url(&path, &branch) {
+            Ok(url) => url,
+            Err(e) => {
+                eprintln!("wt open: {e:#} — opening the branch instead");
+                tree
+            }
+        }
+    };
 
     open_browser(&url)?;
     println!("==> {url}");
     Ok(())
 }
 
-fn current_branch(repo: &Repo) -> Result<String> {
-    let cwd = env::current_dir().context("reading current directory")?;
-    let cwd = cwd.canonicalize().unwrap_or(cwd);
-    let root = repo.root.canonicalize().unwrap_or_else(|_| repo.root.clone());
-    if cwd == root {
-        return repo.default_branch();
+/// `gh pr view` by head branch. `--repo` so the answer does not depend on cwd.
+fn pr_url(path: &str, branch: &str) -> Result<String> {
+    let output = Command::new("gh")
+        .args(["pr", "view", branch, "--repo", path, "--json", "url", "--jq", ".url"])
+        .stdin(Stdio::null())
+        .output()
+        .context("running gh — is it installed?")?;
+    if !output.status.success() {
+        bail!("{}", String::from_utf8_lossy(&output.stderr).trim());
     }
-    for w in repo.checkouts()? {
-        let path = w.path.canonicalize().unwrap_or_else(|_| w.path.clone());
-        if cwd == path || cwd.starts_with(&path) {
-            let name = w.name();
-            return w
-                .branch
-                .ok_or_else(|| anyhow!("{name} is on a detached HEAD, not a branch"));
-        }
+    let url = String::from_utf8_lossy(&output.stdout).trim().to_string();
+    if url.is_empty() {
+        bail!("no PR for {branch}");
     }
-    bail!("{} is not a known worktree — `wt ls` lists them", cwd.display());
+    Ok(url)
 }
 
 /// `git@github.com:org/repo.git` or `https://github.com/org/repo(.git)?` ->
-/// `https://github.com/org/repo`. GitHub only — no other host needed here.
-fn github_web_root(remote: &str) -> Result<String> {
+/// `org/repo`. GitHub only — no other host needed here.
+fn github_path(remote: &str) -> Result<String> {
     let remote = remote.trim();
     let path = remote
         .strip_prefix("git@github.com:")
@@ -51,7 +61,7 @@ fn github_web_root(remote: &str) -> Result<String> {
     if path.is_empty() {
         bail!("origin `{remote}` has no org/repo path");
     }
-    Ok(format!("https://github.com/{path}"))
+    Ok(path.to_string())
 }
 
 fn open_browser(url: &str) -> Result<()> {
@@ -67,26 +77,26 @@ fn open_browser(url: &str) -> Result<()> {
 
 #[cfg(test)]
 mod tests {
-    use super::github_web_root;
+    use super::github_path;
 
     #[test]
     fn converts_github_remotes() {
         assert_eq!(
-            github_web_root("git@github.com:ole-treichel/dotfiles.git").unwrap(),
-            "https://github.com/ole-treichel/dotfiles"
+            github_path("git@github.com:ole-treichel/dotfiles.git").unwrap(),
+            "ole-treichel/dotfiles"
         );
         assert_eq!(
-            github_web_root("https://github.com/ole-treichel/dotfiles.git\n").unwrap(),
-            "https://github.com/ole-treichel/dotfiles"
+            github_path("https://github.com/ole-treichel/dotfiles.git\n").unwrap(),
+            "ole-treichel/dotfiles"
         );
         assert_eq!(
-            github_web_root("https://github.com/ole-treichel/dotfiles").unwrap(),
-            "https://github.com/ole-treichel/dotfiles"
+            github_path("https://github.com/ole-treichel/dotfiles").unwrap(),
+            "ole-treichel/dotfiles"
         );
     }
 
     #[test]
     fn rejects_non_github_remotes() {
-        assert!(github_web_root("git@gitlab.com:acme/thing.git").is_err());
+        assert!(github_path("git@gitlab.com:acme/thing.git").is_err());
     }
 }

@@ -1,7 +1,7 @@
 # wt — git worktree CLI
 
 A Rust CLI that packages the bare-repo worktree workflow used in
-`~/workspace/sonax/sonax-apps` and `~/workspace/sonax/sonax-redesign` into six
+`~/workspace/sonax/sonax-apps` and `~/workspace/sonax/sonax-redesign` into eight
 commands. Replaces hand-typed `git worktree add` / `git branch -d` /
 `git worktree prune` sequences.
 
@@ -33,7 +33,8 @@ wt rm  [dir...]                    remove worktree(s) + local branch(es)
 wt ls                              table of worktrees
 wt clone <url> [name]              build the .bare layout from scratch
 wt vault [slug...]                 symlink docs/<slug>/ into the Obsidian vault
-wt open                            open the repo on GitHub
+wt open                            open the current branch's PR on GitHub
+wt copy                            copy the current branch's slug to the clipboard
 ```
 
 `wt new` with no argument opens a three-step wizard that builds the branch
@@ -62,7 +63,8 @@ a y/N confirmation before anything is deleted.
 | tms | `tms refresh` after `new`, `get`, `rm`. Nothing else — no session creation, no window management |
 | git access | Shell out to `git`. `git2`'s worktree API is thin and this is a wrapper, not a reimplementation |
 | Install | `wt/` in this repo, `cargo build --release`, symlink `~/.local/bin/wt`, same as `qr-lan` |
-| `wt open` | GitHub only, via `xdg-open`. At the workspace root, opens `origin/HEAD`'s branch; inside a worktree (or a subdirectory of one), opens that worktree's checked-out branch |
+| `wt open` | GitHub only, via `xdg-open`. Inside a worktree (or a subdirectory of one), opens the PR whose head is that worktree's branch, looked up with `gh pr view`. No PR, or no `gh` → the branch page, with a note on stderr. At the workspace root (or in the default branch's worktree), opens the default branch's page — it has no PR |
+| `wt copy` | Copies `slug(branch)` of the same branch `wt open` resolves, so the branch name, not the directory name (`feat-shopify-theme/` copies `feat-shopify-theme-p26054`). No trailing newline |
 
 ### Why `origin/HEAD` and not the `main/` worktree
 
@@ -153,8 +155,9 @@ The commit is just `init` — it is the branch's starting point, not a change
 worth describing. The PR is a real one, not a draft: draft state buys nothing
 here, since the PR exists from the first commit and is worked on either way.
 
-Keeping push and PR in a hook rather than in Rust means no `gh` dependency in
-the binary, and the commit message or PR template can change without a rebuild.
+Keeping push and PR in a hook rather than in Rust means the binary needs `gh`
+only for `wt open`'s PR lookup — and works without it — and the commit message
+or PR template can change without a rebuild.
 
 ## Deliberate non-goals
 
@@ -197,7 +200,12 @@ Decisions taken while building it that the design above did not fix.
 | `wt open` branch resolution | Compares canonicalised `cwd` against the canonicalised workspace root and each worktree's path (`starts_with`, so a subdirectory of a worktree still resolves) rather than re-deriving from `git branch --show-current`, which only answers for `cwd` itself, not a subdirectory | Reuses the same `Repo::checkouts()` map every other command trusts, instead of a second way to ask "what branch is this" |
 | `wt open` URL shape | Always `<repo>/tree/<branch>`, even for the default branch | GitHub renders `/tree/main` identically to the repo root, so one code path covers both cases instead of special-casing the default branch |
 | `wt open` browser launch | `Command::new("xdg-open").spawn()`, not `.status()` | `wt` should return as soon as the browser is launched, not block until it's closed |
-| `wt open` verification | `cargo test` covers the GitHub URL mapping (SSH/HTTPS, with/without `.git`, non-GitHub rejected). Exercised end to end against a throwaway local bare-repo layout with a `git@github.com:...` origin rewritten in after clone: from the workspace root, from inside a worktree, and from a subdirectory nested inside a non-default worktree | |
+| `wt open` PR lookup | `gh pr view <branch> --repo <org/repo> --json url --jq .url`, then `xdg-open` the URL. `--repo` comes from origin's URL | `--repo` makes the answer independent of cwd. Reading the URL rather than `gh pr view --web` keeps one browser launcher and lets a failed lookup fall back to the branch page instead of erroring |
+| `wt open` default branch | No `gh` call; straight to `/tree/<default>` | It never has a PR of its own, and skipping the call saves a network round trip |
+| Branch resolution | `Repo::current_branch()`, shared by `open` and `copy` | One answer to "which branch is cwd on" |
+| `wt copy` clipboard | `wl-copy` when `$WAYLAND_DISPLAY` is set, else `xclip -selection clipboard -i` (what tmux's copy mode uses). stdout/stderr nulled | Both fork a child that serves the selection; inherited pipes would keep a caller capturing `wt`'s output waiting |
+| `wt open` verification | `cargo test` covers the GitHub URL mapping (SSH/HTTPS, with/without `.git`, non-GitHub rejected). Exercised end to end against a throwaway local bare-repo layout with a `git@github.com:...` origin rewritten in after clone: from the workspace root, from inside a worktree, and from a subdirectory nested inside a non-default worktree. PR lookup exercised against `sonax-redesign` with `xdg-open` stubbed via `PATH`: worktrees with PRs (including one whose directory differs from its branch), a subdirectory, the default branch, and a branch with no PR (fallback) | |
+| `wt copy` verification | From a worktree, a subdirectory of one, and the workspace root, via both `wl-copy` and `xclip` (`WAYLAND_DISPLAY` unset), read back with `wl-paste`/`xclip -o`. Outside a repo → the usual `.bare/` error | |
 
 ## Known state to be aware of
 
