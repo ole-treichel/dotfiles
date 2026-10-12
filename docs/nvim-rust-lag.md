@@ -59,7 +59,21 @@ GC pauses up to ~90 ms, and fixed input waits from mappings.
    files still get diagnostics.
 2. **Completion payload → GC.** The top Lua stacks during stalls were nvim-cmp
    turning rust-analyzer completion items into entries (`entry.lua`, `str.lua`, snippet
-   parsing). **Fix:** `rust-analyzer.completion.limit = 50`.
+   parsing). **Not fixed.** `rust-analyzer.completion.limit = 50` was tried and
+   reverted: rust-analyzer truncates by its own relevance ranking *before* the
+   client filters by the typed prefix, so matching items are cut. A/B against
+   rust-analyzer in `todo/main`, item wanted after typing the prefix:
+
+   | typed | wanted | limit 50 | unlimited |
+   |---|---|---|---|
+   | `users.ite` | `iter` | found | found |
+   | `HashM` | `HashMap` | **missing** | found |
+   | `load_us` | `load_users` | **missing** | found |
+   | `Strin` | `String` | **missing** | found |
+   | `TaskSt` | `TaskStatus` | found | found |
+   | `tokio::sp` | `spawn` | found | found |
+
+   Unlimited lists are 180–260 items per request.
 3. **Statusline spawned git synchronously.** `io.popen('git rev-parse ...')` on
    every statusline evaluation: 6.7 ms each, on every cursor move and every forced
    redraw. **Fix:** cache the branch and refresh it asynchronously (`vim.system`) on
@@ -75,16 +89,15 @@ GC pauses up to ~90 ms, and fixed input waits from mappings.
 ## Result
 
 Same scripted scenario (copy of `todo/main`, real config, keystrokes via tmux),
-baseline vs. all four fixes:
+baseline vs. fixes 1, 3, 4 (no completion limit):
 
 | | before | after |
 |---|---|---|
-| `vim.diagnostic.set` calls / main-thread time | ~500 / 3.9–4.5 s | 191 / 0.13 s |
-| `DiagnosticChanged` autocmd time | 3.8–4.3 s | 0.08 s |
+| `vim.diagnostic.set` calls / main-thread time | ~500 / 3.9–4.5 s | 190 / 0.14 s |
+| `DiagnosticChanged` autocmd time | 3.8–4.3 s | 0.09 s |
 | html diagnostic pulls | every edit + every refresh | 0 (5 pushes) |
-| Keystroke latency p50 / p95 / max | 10–17 / 20–46 / 30–62 ms | 9 / 11–13 / 13–22 ms |
-| Stalls > 50 ms while typing | 1–4 per phase | 0 (max 38 ms) |
-| rust-analyzer completion items | unbounded | 50 |
+| Keystroke latency p50 / p95 / max | 10–17 / 20–46 / 30–62 ms | 10–13 / 14–18 / 15–22 ms |
+| Stalls > 50 ms while typing | 1–4 per phase | 0 (max 48 ms) |
 | `status_line()` | 6.7 ms | 0.005 ms |
 
 ## Non-goals / rejected

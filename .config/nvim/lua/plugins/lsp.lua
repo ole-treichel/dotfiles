@@ -19,16 +19,6 @@ return {
       },
     })
 
-    -- Rust: cap the completion list; big lists make nvim-cmp allocate enough
-    -- to cause Lua GC pauses while typing (see docs/nvim-rust-lag.md)
-    vim.lsp.config('rust_analyzer', {
-      settings = {
-        ['rust-analyzer'] = {
-          completion = { limit = 50 },
-        },
-      },
-    })
-
     -- HTML (with extended filetypes)
     vim.lsp.config('html', {
       filetypes = {
