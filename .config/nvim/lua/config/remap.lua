@@ -55,17 +55,15 @@ vim.api.nvim_create_autocmd('filetype', {
 })
 
 -- prevent overwriting clipboard when pasting
+-- No 'dd'/'diw'/'cc' maps: 'd'/'c' already cover them ("_d + d = "_dd), and
+-- a second map sharing the prefix makes 'd'/'c' wait timeoutlen (300ms).
 vim.keymap.set('v', 'd', '"_d')
-vim.keymap.set('v', 'dd', '"_dd')
 vim.api.nvim_set_keymap('v', 'p', 'P', { noremap = true })
 vim.keymap.set('n', 'd', '"_d')
-vim.keymap.set('n', 'diw', '"_diw')
-vim.keymap.set('n', 'dd', '"_dd')
 
 -- prevent overwriting clipboard when changing
 vim.keymap.set({ 'n', 'v' }, 'c', '"_c')
 vim.keymap.set({ 'n', 'v' }, 'C', '"_C')
-vim.keymap.set('n', 'cc', '"_cc')
 vim.keymap.set('n', 's', '"_s')
 vim.keymap.set('n', 'S', '"_S')
 

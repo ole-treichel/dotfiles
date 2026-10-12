@@ -19,6 +19,16 @@ return {
       },
     })
 
+    -- Rust: cap the completion list; big lists make nvim-cmp allocate enough
+    -- to cause Lua GC pauses while typing (see docs/nvim-rust-lag.md)
+    vim.lsp.config('rust_analyzer', {
+      settings = {
+        ['rust-analyzer'] = {
+          completion = { limit = 50 },
+        },
+      },
+    })
+
     -- HTML (with extended filetypes)
     vim.lsp.config('html', {
       filetypes = {
@@ -30,6 +40,17 @@ return {
         "typescript.tsx",
         "rust",
       },
+      -- Push instead of pull diagnostics. On every workspace/diagnostic/refresh
+      -- from rust-analyzer (~once per edit), nvim re-pulls all pull clients for
+      -- all attached buffers, which made html re-validate every open Rust
+      -- buffer per keystroke. Without client pull support the server pushes,
+      -- but it still advertises diagnosticProvider, so drop that too.
+      before_init = function(params)
+        params.capabilities.textDocument.diagnostic = nil
+      end,
+      on_init = function(client)
+        client.server_capabilities.diagnosticProvider = nil
+      end,
     })
 
     -- Enable all servers

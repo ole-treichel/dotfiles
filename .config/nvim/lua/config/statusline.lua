@@ -1,16 +1,30 @@
 -- Stolen from here:
 -- https://github.com/heygarrett/.config/blob/41f747f1dbd29ba8375c051c7b87c4a72806b0a4/nvim/plugin/statusline.lua
-local function branch_name()
-  local branch = io.popen 'git rev-parse --abbrev-ref HEAD 2> /dev/null'
-  if branch then
-    local name = branch:read '*l'
-    branch:close()
-    if name then
-      return name .. ' | '
-    else
-      return ''
+
+-- The statusline is evaluated on every cursor move and redraw, so the branch
+-- is cached and refreshed asynchronously instead of spawning git each time.
+-- (FocusGained never fires in tmux here: focus-events is off.)
+local branch = ''
+
+local function update_branch()
+  vim.system({ 'git', 'rev-parse', '--abbrev-ref', 'HEAD' }, { text = true }, function(result)
+    local name = result.code == 0 and vim.trim(result.stdout) or ''
+    local new = name ~= '' and name .. ' | ' or ''
+    if new ~= branch then
+      branch = new
+      vim.schedule(function()
+        vim.cmd.redrawstatus()
+      end)
     end
-  end
+  end)
+end
+
+vim.api.nvim_create_autocmd({ 'VimEnter', 'DirChanged', 'FocusGained', 'BufEnter' }, {
+  callback = update_branch,
+})
+
+local function branch_name()
+  return branch
 end
 
 local function file_name()
