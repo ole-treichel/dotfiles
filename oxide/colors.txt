@@ -1,0 +1,111 @@
+# Oxide Color Palette — dark (upstream) and light (derived)
+# Source of truth for every oxide asset in this repo.
+# Format: name  hex  oklch  description
+#
+# Dark: verbatim from https://github.com/oxidescheme/oxide/blob/main/colors.txt
+# Light: not upstream. Derived here, see docs/oxide-theme.md. Rules:
+#   - neutrals mirror the dark offsets around base (L 0.20 -> 0.97)
+#   - accents share L 0.52, C 0.15 (dark: L 0.70) for >= 4.3:1 on base
+#   - bright accents L 0.45 (higher contrast on light, as dark bright is on dark)
+#   - diff backgrounds L 0.90, C 0.04
+#   - out-of-gamut values clipped per sRGB channel, same as upstream
+
+# ===========================================================================
+# Dark
+# ===========================================================================
+
+# Surface colors
+mantle     #121212  oklch(0.18 0 0)    Cursor line, subtle backgrounds
+base       #161616  oklch(0.20 0 0)    Main background
+surface0   #222222  oklch(0.25 0 0)    Cursor background
+surface1   #2e2e2e  oklch(0.30 0 0)    Active selections
+surface2   #3a3a3a  oklch(0.35 0 0)    Borders, lines
+
+# Text colors
+bright_text #eeeeee  oklch(0.95 0 0)    Bright text
+text       #cecece  oklch(0.85 0 0)    Primary text
+subtext0   #aeaeae  oklch(0.75 0 0)    Secondary text
+subtext1   #808080  oklch(0.60 0 0)    Muted text
+subtext2   #555555  oklch(0.45 0 0)    Comments, borders, subtle elements
+
+# Accent colors
+red        #ed756e  oklch(0.70 0.15 25)  Errors, critical items
+orange     #e48233  oklch(0.70 0.15 55)  Warnings, numbers, constants
+yellow     #c39900  oklch(0.70 0.15 90)  Attention, search highlights
+lime       #9ca81f  oklch(0.70 0.15 115) Headings, progression, positive accents
+green      #5bb661  oklch(0.70 0.15 145) Success, strings, added items
+teal       #00baaa  oklch(0.70 0.15 185) Special elements, regex, escape chars
+sky        #00b3d6  oklch(0.70 0.15 215) Classes, types, bold markup
+blue       #3ba6f5  oklch(0.70 0.15 245) Variables, identifiers
+purple     #968ff7  oklch(0.70 0.15 285) Keywords, storage, changed items
+pink       #cc7bd1  oklch(0.70 0.15 325) Deprecated, special tags
+
+# Bright accent colors (ANSI bright variants)
+bright_red        #ff9890  oklch(0.80 0.15 25)
+bright_orange     #ffa156  oklch(0.80 0.15 55)
+bright_yellow     #e3b831  oklch(0.80 0.15 90)
+bright_lime       #bbc949  oklch(0.80 0.15 115)
+bright_green      #7bd77f  oklch(0.80 0.15 145)
+bright_teal       #00dcca  oklch(0.80 0.15 185)
+bright_sky        #00d5f9  oklch(0.80 0.15 215)
+bright_blue       #6fc6ff  oklch(0.80 0.15 245)
+bright_purple     #b5b2ff  oklch(0.80 0.15 285)
+bright_pink       #dd8be2  oklch(0.80 0.15 325)
+
+# Diff colors
+diff_delete #452b28  oklch(0.32 0.04 25)   Deleted lines
+diff_add    #263826  oklch(0.32 0.04 145)  Added lines
+diff_change #213546  oklch(0.32 0.04 245)  Changed lines
+
+# ANSI (from oxidescheme/ghostty)
+# 0 surface0  1 red  2 green  3 yellow  4 blue  5 purple  6 teal  7 text
+# 8 subtext1  9-14 bright_{red,green,yellow,blue,purple,teal}  15 bright_text
+
+# ===========================================================================
+# Light (derived)
+# ===========================================================================
+
+# Surface colors
+mantle     #eeeeee  oklch(0.95 0 0)    Cursor line, subtle backgrounds
+base       #f5f5f5  oklch(0.97 0 0)    Main background
+surface0   #e4e4e4  oklch(0.92 0 0)    Cursor background
+surface1   #d4d4d4  oklch(0.87 0 0)    Active selections
+surface2   #c4c4c4  oklch(0.82 0 0)    Borders, lines
+
+# Text colors
+bright_text #1b1b1b  oklch(0.22 0 0)    Bright text
+text       #333333  oklch(0.32 0 0)    Primary text
+subtext0   #4d4d4d  oklch(0.42 0 0)    Secondary text
+subtext1   #777777  oklch(0.57 0 0)    Muted text
+subtext2   #a4a4a4  oklch(0.72 0 0)    Comments, borders, subtle elements
+
+# Accent colors
+red        #af3c3a  oklch(0.52 0.15 25)
+orange     #a74a00  oklch(0.52 0.15 55)
+yellow     #8a6200  oklch(0.52 0.15 90)
+lime       #687100  oklch(0.52 0.15 115)
+green      #1b7e2a  oklch(0.52 0.15 145)
+teal       #008274  oklch(0.52 0.15 185)
+sky        #007b9e  oklch(0.52 0.15 215)
+blue       #006eb8  oklch(0.52 0.15 245)
+purple     #6358ba  oklch(0.52 0.15 285)
+pink       #924598  oklch(0.52 0.15 325)
+
+# Bright accent colors (ANSI bright variants)
+bright_red        #972527  oklch(0.45 0.15 25)
+bright_orange     #903500  oklch(0.45 0.15 55)
+bright_yellow     #754d00  oklch(0.45 0.15 90)
+bright_lime       #545d00  oklch(0.45 0.15 115)
+bright_green      #006911  oklch(0.45 0.15 145)
+bright_teal       #006d60  oklch(0.45 0.15 185)
+bright_sky        #006688  oklch(0.45 0.15 215)
+bright_blue       #0058a1  oklch(0.45 0.15 245)
+bright_purple     #5043a3  oklch(0.45 0.15 285)
+bright_pink       #7c2f82  oklch(0.45 0.15 325)
+
+# Diff colors
+diff_delete #f8d4d1  oklch(0.90 0.04 25)   Deleted lines
+diff_add    #cee6ce  oklch(0.90 0.04 145)  Added lines
+diff_change #c9e2f7  oklch(0.90 0.04 245)  Changed lines
+
+# ANSI: same role mapping as dark (0 surface0 ... 7 text, 8 subtext1, 15 bright_text)

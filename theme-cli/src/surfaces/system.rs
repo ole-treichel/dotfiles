@@ -19,8 +19,18 @@ mod linux {
     const SHELL_USER_THEME: &str = "org.gnome.shell.extensions.user-theme";
     const GTK4_CSS_FILES: &[&str] = &["assets", "gtk.css", "gtk-dark.css"];
 
+    /// `gsettings` against dconf. An inherited `GSETTINGS_BACKEND=keyfile`
+    /// (set by some AppImage runtimes, then kept in tmux's global environment)
+    /// sends writes to ~/.config/glib-2.0/settings/keyfile, which the session
+    /// never reads.
+    fn gsettings() -> Command {
+        let mut cmd = Command::new("gsettings");
+        cmd.env_remove("GSETTINGS_BACKEND");
+        cmd
+    }
+
     pub fn read() -> Result<Mode> {
-        let out = Command::new("gsettings")
+        let out = gsettings()
             .args(["get", IFACE, "color-scheme"])
             .output()
             .context("invoking gsettings get color-scheme")?;
@@ -82,7 +92,7 @@ mod linux {
     }
 
     fn set(schema: &str, key: &str, value: &str) -> Result<()> {
-        let status = Command::new("gsettings")
+        let status = gsettings()
             .args(["set", schema, key, value])
             .status()
             .with_context(|| format!("spawning gsettings set {schema} {key}"))?;
@@ -93,7 +103,7 @@ mod linux {
     }
 
     fn schema_present(schema: &str) -> bool {
-        Command::new("gsettings")
+        gsettings()
             .args(["list-schemas"])
             .output()
             .ok()

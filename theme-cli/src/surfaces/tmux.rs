@@ -8,8 +8,8 @@ use crate::surfaces::{Mode, SurfaceReport};
 pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
     let name = "tmux";
     let theme_file = cfg.repo_path.join("tmux").join(match mode {
-        Mode::Light => "everforest-light.conf",
-        Mode::Dark => "everforest-dark.conf",
+        Mode::Light => "oxide-light.conf",
+        Mode::Dark => "oxide-dark.conf",
     });
 
     if !theme_file.exists() {

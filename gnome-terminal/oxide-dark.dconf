@@ -1,0 +1,9 @@
+[/]
+background-color='rgb(22,22,22)'
+font='Berkeley Mono 9'
+foreground-color='rgb(206,206,206)'
+palette=['rgb(34,34,34)', 'rgb(237,117,110)', 'rgb(91,182,97)', 'rgb(195,153,0)', 'rgb(59,166,245)', 'rgb(150,143,247)', 'rgb(0,186,170)', 'rgb(206,206,206)', 'rgb(128,128,128)', 'rgb(255,152,144)', 'rgb(123,215,127)', 'rgb(227,184,49)', 'rgb(111,198,255)', 'rgb(181,178,255)', 'rgb(0,220,202)', 'rgb(238,238,238)']
+scrollbar-policy='never'
+use-system-font=false
+use-theme-colors=false
+visible-name='Oxide'

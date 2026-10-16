@@ -1,7 +1,11 @@
-# theme-cli: Firefox surface (deactivated)
+# theme-cli: Firefox surface (web-ext, removed)
 
-Status: **deactivated 2026-09-08**. Code and themes stay in the repo; the
-surface no-ops via empty IDs in `theme-cli/config.toml`.
+Status: **deactivated 2026-09-08, replaced 2026-10-16.** The web-ext code and
+the Everforest Firefox themes are deleted. Firefox is now themed by one Oxide
+theme installed into Firefox's system extension scope, see
+[oxide-theme.md § Firefox](oxide-theme.md#firefox). That route uses none of
+the rejected approaches below. This file stays as the record of why web-ext
+is out.
 
 ## What it did
 

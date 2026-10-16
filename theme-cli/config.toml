@@ -12,8 +12,8 @@ repo_path = "/home/ole/workspace/dotfiles"
 # --- Linux-only -----------------------------------------------------------
 [gtk]
 # GTK theme names as shown in gnome-tweaks. These must be installed.
-light = "Everforest-Light"
-dark  = "Everforest-Dark"
+light = "Oxide-Light"
+dark  = "Oxide-Dark"
 
 [chrome]
 # Linux: Flatpak app ID. Leave empty ("") to disable.
@@ -21,21 +21,11 @@ flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
 # macOS: app name for `open -a`. Leave empty ("") to disable.
 # app_name = "Chromium"
 
-[firefox]
-# DEACTIVATED — see docs/theme-firefox.md. `web-ext run --keep-profile-changes`
-# dumps a 72-line test-harness user.js into the target profile (safebrowsing
-# off, password saving off, session restore off, updates off, remote debugging
-# on, unsigned xpinstall on). Not an acceptable trade-off for a daily driver.
-# Both IDs stay empty so the surface no-ops on Linux and macOS.
-# Linux: Flatpak app ID. Leave empty ("") to disable.
-flatpak_app_id = ""
-# macOS: app name for `open -a`/`osascript`. Leave empty ("") to disable.
-# app_name = "Firefox"
-# Firefox profile name (as shown in about:profiles) to load the theme into.
-profile = "default-release"
+# Firefox needs no config: one theme with light + dark_theme, installed once by
+# firefox/install_theme.sh. See docs/oxide-theme.md.
 
 [ghostty]
 # Theme names as shown by `ghostty +list-themes`.
-light = "Everforest Light Med"
-dark  = "Everforest Dark Med"
+light = "Oxide Light"
+dark  = "Oxide Dark"
 # config_path = ""  # auto-detected if empty
