@@ -1,7 +1,7 @@
 # Oxide everywhere
 
 Status: implemented 2026-10-16. Replaces Everforest on every `theme` surface,
-plus Obsidian (not a `theme` surface).
+plus Obsidian and Thunderbird (not `theme` surfaces).
 
 Upstream: [oxidescheme](https://github.com/orgs/oxidescheme/repositories).
 Palette for this repo: [`oxide/colors.txt`](../oxide/colors.txt).
@@ -57,6 +57,7 @@ blue). No blue "brand" accent on focus rings, tabs, toggles, or headers.
 | tmux | `tmux/oxide-{dark,light}.conf` | status mantle/subtext0; active window bright_text on surface1; prefix-active session block blue; activity yellow; bell red |
 | Chrome (ungoogled-chromium) | `chrome/oxide-{dark,light}/` | frame darker than toolbar; incognito frame surface1 / surface2 |
 | Firefox | `firefox/oxide/` | one theme, `theme` + `dark_theme`, see [Firefox](#firefox) |
+| Thunderbird (flatpak) | `thunderbird/install_theme.sh` | same manifest as Firefox, see [Thunderbird](#thunderbird) |
 | hunk | `hunk/config.toml` | `[themes.oxide-dark]` / `[themes.oxide-light]`; `~/.config/hunk/config.toml` symlinks here. Untokenized text (plain files, first frame) comes from the base theme's foreground, not a config key: bases `dark-plus` / `vitesse-light` give `#d4d4d4` / `#393a34`, closest bundled match to oxide text |
 | delta | `bat/themes/*.tmTheme`, `.gitconfig` `[delta "oxide-*"]` | syntax via bat cache; `theme` sets `delta.features` |
 | GNOME Terminal (module unused) | `gnome-terminal/oxide-{dark,light}.dconf` | kept in sync for completeness |
@@ -137,6 +138,23 @@ Non-goals (unchanged from [theme-firefox.md](theme-firefox.md)): web-ext,
 AMO signing, `userChrome.css`. This route depends on Fedora's build flags; a
 Mozilla-built Firefox (tarball, Mozilla flatpak, macOS) would not load it.
 
+## Thunderbird
+
+Same theme format as Firefox, so `thunderbird/install_theme.sh` zips
+`firefox/oxide/manifest.json` into `oxide@theme-cli.xpi` in each install's
+default profile under `~/.var/app/net.thunderbird.Thunderbird/.thunderbird/`.
+One manifest for both apps, no second copy to keep in sync.
+
+Facts checked on the flatpak (156) `omni.ja`: `MOZ_REQUIRE_SIGNING: false`
+and `xpinstall.signatures.required` defaults to `false`, so an unsigned XPI
+in the profile loads without changing any pref; `extensions.autoDisableScopes
+= 0`; the theme schema accepts `dark_theme`. The profile scope is scanned at
+startup only when `addonStartup.json.lz4` is missing or the build changes,
+so the script deletes that cache (Thunderbird rebuilds it). Thunderbird must
+be closed. Rerun after editing the manifest. The previously active Everforest
+theme from addons.thunderbird.net stays installed; enable Oxide once in
+Add-ons and Themes → Themes.
+
 ## Obsidian
 
 `theme.css` defines the palette per `.theme-dark` / `.theme-light` and maps
@@ -159,6 +177,6 @@ surface needed.
 ## Non-goals
 
 - Icon theme (Adwaita stays).
-- Ableton skins (`ableton/`), Thunderbird, Spotify: not `theme` surfaces.
+- Ableton skins (`ableton/`), Spotify: not `theme` surfaces.
 - Lazygit / yazi: upstream ports exist but they are not `theme` surfaces.
 - Upstreaming the light palette or the new ports to oxidescheme.
