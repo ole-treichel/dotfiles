@@ -1,0 +1,28 @@
+{
+    "name": "Oxide Light",
+    "version": "1.0.0",
+    "description": "Oxide light for Chromium. Palette: oxide/colors.txt in the dotfiles repo.",
+    "manifest_version": 3,
+    "theme": {
+        "colors": {
+            "frame": [ 228, 228, 228 ],
+            "frame_inactive": [ 228, 228, 228 ],
+            "frame_incognito": [ 196, 196, 196 ],
+            "frame_incognito_inactive": [ 196, 196, 196 ],
+            "toolbar": [ 245, 245, 245 ],
+            "toolbar_button_icon": [ 51, 51, 51 ],
+            "toolbar_text": [ 51, 51, 51 ],
+            "omnibox_text": [ 51, 51, 51 ],
+            "omnibox_background": [ 238, 238, 238 ],
+            "tab_text": [ 27, 27, 27 ],
+            "tab_background_text": [ 119, 119, 119 ],
+            "tab_background_text_inactive": [ 119, 119, 119 ],
+            "tab_background_text_incognito": [ 77, 77, 77 ],
+            "tab_background_text_incognito_inactive": [ 77, 77, 77 ],
+            "bookmark_text": [ 77, 77, 77 ],
+            "ntp_background": [ 245, 245, 245 ],
+            "ntp_text": [ 51, 51, 51 ],
+            "ntp_link": [ 51, 51, 51 ]
+        }
+    }
+}

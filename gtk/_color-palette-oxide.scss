@@ -1,0 +1,85 @@
+// Oxide palette for the Everforest-GTK-Theme (Colloid) sass sources.
+// Values: oxide/colors.txt (dark upstream, light derived).
+// Imported from _tweaks-temp.scss, after the entry file has set $variant.
+
+// ---------------------------------------------------------------------------
+// Oxide roles, resolved per variant. oxide.patch points the semantic
+// colors in _colors.scss at these.
+// ---------------------------------------------------------------------------
+$ox-mantle:      if($variant == 'light', #eeeeee, #121212);
+$ox-base:        if($variant == 'light', #f5f5f5, #161616);
+$ox-surface0:    if($variant == 'light', #e4e4e4, #222222);
+$ox-surface1:    if($variant == 'light', #d4d4d4, #2e2e2e);
+$ox-surface2:    if($variant == 'light', #c4c4c4, #3a3a3a);
+
+$ox-bright-text: if($variant == 'light', #1b1b1b, #eeeeee);
+$ox-text:        if($variant == 'light', #333333, #cecece);
+$ox-subtext0:    if($variant == 'light', #4d4d4d, #aeaeae);
+$ox-subtext1:    if($variant == 'light', #777777, #808080);
+$ox-subtext2:    if($variant == 'light', #a4a4a4, #555555);
+
+$ox-red:         if($variant == 'light', #af3c3a, #ed756e);
+$ox-orange:      if($variant == 'light', #a74a00, #e48233);
+$ox-yellow:      if($variant == 'light', #8a6200, #c39900);
+$ox-green:       if($variant == 'light', #1b7e2a, #5bb661);
+$ox-teal:        if($variant == 'light', #008274, #00baaa);
+$ox-sky:         if($variant == 'light', #007b9e, #00b3d6);
+$ox-blue:        if($variant == 'light', #006eb8, #3ba6f5);
+$ox-purple:      if($variant == 'light', #6358ba, #968ff7);
+$ox-pink:        if($variant == 'light', #924598, #cc7bd1);
+
+// ---------------------------------------------------------------------------
+// Upstream palette names. Upstream convention: `-light` is the color for a
+// light background, `-dark` the color for a dark background.
+// ---------------------------------------------------------------------------
+$blue-light:   #006eb8;
+$blue-dark:    #3ba6f5;
+$green-light:  #1b7e2a;
+$green-dark:   #5bb661;
+$orange-light: #a74a00;
+$orange-dark:  #e48233;
+$pink-light:   #924598;
+$pink-dark:    #cc7bd1;
+$purple-light: #6358ba;
+$purple-dark:  #968ff7;
+$red-light:    #af3c3a;
+$red-dark:     #ed756e;
+$teal-light:   #008274;
+$teal-dark:    #00baaa;
+$yellow-light: #8a6200;
+$yellow-dark:  #c39900;
+
+// Neutral ramp, light (050) to dark (950), built from both oxide ramps.
+$grey-050: #f5f5f5; // light base
+$grey-100: #eeeeee; // light mantle
+$grey-150: #e4e4e4; // light surface0
+$grey-200: #d4d4d4; // light surface1
+$grey-250: #c4c4c4; // light surface2
+$grey-300: #aeaeae; // dark subtext0
+$grey-350: #a4a4a4; // light subtext2
+$grey-400: #808080; // dark subtext1
+$grey-450: #777777; // light subtext1
+$grey-500: #555555; // dark subtext2
+$grey-550: #4d4d4d; // light subtext0
+$grey-600: #3a3a3a; // dark surface2
+$grey-650: #2e2e2e; // dark surface1
+$grey-700: #222222; // dark surface0
+$grey-750: #121212; // dark mantle (sidebars)
+$grey-800: #1c1c1c;
+$grey-850: #121212; // dark mantle
+$grey-900: #101010;
+$grey-950: #0e0e0e;
+
+// Extremes. $white: light base and highlight color. $black: dark base and
+// the text color on light surfaces (rgba($black, 0.87) over base = #333333).
+$white: #f5f5f5;
+$black: #161616;
+
+// Theme accent: monochrome. Oxide reserves accents for semantic state.
+$default-light: #333333; // light text
+$default-dark:  #cecece; // dark text
+
+// Window buttons (mac tweak only): monochrome.
+$button-close: if($topbar == 'light', #777777, #808080);
+$button-max:   if($topbar == 'light', #777777, #808080);
+$button-min:   if($topbar == 'light', #777777, #808080);

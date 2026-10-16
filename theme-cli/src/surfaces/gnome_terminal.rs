@@ -6,10 +6,10 @@ use anyhow::{anyhow, Context, Result};
 use crate::config::Config;
 use crate::surfaces::{Mode, SurfaceReport};
 
-/// Fixed UUID for the Everforest profile. Baked in so the CLI can create
+/// Fixed UUID for the Oxide profile. Baked in so the CLI can create
 /// and reference the profile without any manual setup in GNOME Terminal.
 const PROFILE_UUID: &str = "3b1a4e2f-8c7d-4b9e-a1f2-c3d4e5f6a7b8";
-const PROFILE_NAME: &str = "Everforest";
+const PROFILE_NAME: &str = "Oxide";
 
 pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
     let name = "gnome-terminal";
@@ -17,8 +17,8 @@ pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
         let created = ensure_profile_registered()?;
 
         let file = cfg.repo_path.join("gnome-terminal").join(match mode {
-            Mode::Light => "everforest-light.dconf",
-            Mode::Dark => "everforest-dark.dconf",
+            Mode::Light => "oxide-light.dconf",
+            Mode::Dark => "oxide-dark.dconf",
         });
         if !file.exists() {
             return Err(anyhow!("dconf file not found: {}", file.display()));
@@ -49,7 +49,7 @@ pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
     }
 }
 
-/// Ensures the Everforest profile is registered in the terminal's profile
+/// Ensures the Oxide profile is registered in the terminal's profile
 /// list. Returns `true` if we just created it, `false` if it already existed.
 fn ensure_profile_registered() -> Result<bool> {
     let current = dconf_read("/org/gnome/terminal/legacy/profiles:/list")?;

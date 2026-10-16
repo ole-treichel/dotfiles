@@ -1,6 +1,6 @@
 # theme-cli
 
-Single command to switch system-wide light/dark mode across GNOME, Neovim, tmux, GNOME Terminal, Chrome, Hunk (git pager/difftool), and delta (git's `interactive.diffFilter`).
+Single command to switch system-wide light/dark mode across GNOME (GTK + Shell), Neovim, tmux, Ghostty, Chrome, Hunk (git pager/difftool), and delta (git's `interactive.diffFilter`). All surfaces use the Oxide scheme: upstream dark, derived light (`../oxide/colors.txt`, `../docs/oxide-theme.md`).
 
 `gsettings get org.gnome.desktop.interface color-scheme` is the source of truth. `theme light` / `theme dark` set it and push matching changes to the surfaces that don't auto-follow.
 
@@ -20,11 +20,11 @@ ln -sf "$PWD/target/release/theme" ~/.local/bin/theme
 
 Edit `config.toml` (or copy to `~/.config/theme-cli/config.toml` for a user-local override):
 
-- `[gtk] light` / `dark` — GTK theme names shown in gnome-tweaks (defaults: `Everforest-Light` / `Everforest-Dark`)
+- `[gtk] light` / `dark` — GTK theme names shown in gnome-tweaks (defaults: `Oxide-Light` / `Oxide-Dark`, built by `../gtk/build_oxide_gtk.sh`)
 
 The GNOME Terminal profile is created automatically on first run — no manual setup.
 
-The Firefox surface is **deactivated** (`[firefox] flatpak_app_id = ""`): the `web-ext run --keep-profile-changes` approach wrecks the target profile. See [docs/theme-firefox.md](../docs/theme-firefox.md).
+Firefox: run `../firefox/install_theme.sh` once. The theme holds both palettes (`dark_theme`) and follows the system color-scheme, so the Firefox surface only reports whether it is installed. See [docs/oxide-theme.md](../docs/oxide-theme.md).
 
 ## Use
 

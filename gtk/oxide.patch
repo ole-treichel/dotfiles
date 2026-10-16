@@ -1,0 +1,231 @@
+diff --git a/themes/src/sass/_colors.scss b/themes/src/sass/_colors.scss
+index a13f24dc..3e2d6ad3 100644
+--- a/themes/src/sass/_colors.scss
++++ b/themes/src/sass/_colors.scss
+@@ -28,7 +28,8 @@
+ 	// Calculate color brightness according to https://www.w3.org/TR/AERT/#color-contrast
+ 	$brightness: (red($color) * 299 + green($color) * 587 + blue($color) * 114) / 1000;
+ 
+-	@if ($brightness >= 156) {
++	// oxide: cutoff 125 (upstream 156), see _color-palette-oxide.scss
++	@if ($brightness >= 125) {
+ 		@if ($state == 'primary')            { @return rgba($black, 0.87); }
+ 		@if ($state == 'secondary')          { @return rgba($black, 0.6); }
+ 		@if ($state == 'disabled')           { @return rgba($black, 0.38); }
+@@ -39,7 +40,7 @@
+ 		@if ($state == 'secondary-fill')     { @return rgba($black, 0.08); }
+ 		@if ($state == 'fill')               { @return rgba($black, 0.04); }
+ 	} @else {
+-		@if ($state == 'primary')            { @return $white; }
++		@if ($state == 'primary')            { @return if($variant == 'dark', $ox-text, $white); }
+ 		@if ($state == 'secondary')          { @return rgba($white, 0.7); }
+ 		@if ($state == 'disabled')           { @return rgba($white, 0.5); }
+ 		@if ($state == 'secondary-disabled') { @return rgba($white, 0.32); }
+@@ -146,28 +147,31 @@
+ 
+ // Basic colors
+ $primary:                               theme(color);
+-$drop_target_color:                     $orange-dark;
++$drop_target_color:                     $ox-orange;
+ $indicator:                             if($variant == 'dark', mix($primary, background(b), 0%), mix($primary, background(f), 0%));
+ $titlebar-indicator:                    if($variant == 'dark', currentColor, $primary);
+ $inverse-indicator:                     mix($primary, $white, 0%);
+ $applet-primary:                        if($theme == 'grey' and variant == 'light' and $topbar == 'dark', $grey-200, $primary);
+ 
+-$background:                            if($variant == 'light', background(a), background(f));
+-$surface:                               if($variant == 'light', background(b), background(g));
+-$base:                                  if($variant == 'light', background(c), background(h));
+-$base-alt:                              if($variant == 'light', background(d), background(h));
+-$card:                                  if($variant == 'light', background(b), background(h));
+-$menu:                                  if($variant == 'light', $grey-150, $grey-800);
++// oxide: window/views = base, chrome (headerbar, sidebar) = mantle,
++// cards one step off the window, popovers/menus elevated.
++$background:                            $ox-base;
++$surface:                               $ox-mantle;
++$base:                                  $ox-base;
++$base-alt:                              $ox-base;
++$card:                                  if($variant == 'light', $ox-mantle, $ox-surface0);
++$menu:                                  if($variant == 'light', $ox-base, $ox-surface0);
++$selection:                             $ox-surface1;
+ 
+ $tooltip:                               if($variant == 'dark', rgba(darken(background(f), 3%), 0.9), rgba(darken(background(h), 3%), 0.9));
+ $osd:                                   mix($primary, background(f), 0%);
+ $scrim:                                 mix($primary, background(g), 0%);
+ $scrim-alt:                             mix($primary, background(h), 0%);
+ $scrim-inverse:                         rgba($white, 0.1);
+-$titlebar:                              if($variant == 'light', background(a), background(f));
+-$titlebar-backdrop:                     if($variant == 'light', background(a), background(f));
++$titlebar:                              $ox-mantle;
++$titlebar-backdrop:                     $ox-mantle;
+ $titlebar-indicator:                    if($topbar  == 'dark', 	background(b), background(e));
+-$popover:                               if($variant == 'light', background(a), background(g));
++$popover:                               if($variant == 'light', $ox-base, $ox-surface0);
+ $panel-solid:                           if($topbar  == 'dark', 	background(f), background(d)); // for Unity panel which doesn't allow translucent colors
+ $panel:                                 rgba($panel-solid, $panel_opacity);
+ 
+@@ -177,20 +181,22 @@ $entry:                                 if($variant == 'dark', on($background, s
+ // Misc colors
+ $chromium-tabs:                         if($variant == 'light', $grey-200, $grey-600);
+ 
+-$link:                                  mix($blue-dark, $teal-dark, 50%);
+-$link-visited:                          if($variant == 'light', $purple-dark, $purple-light);
++// oxide: accents only for semantic state (oxide UI_COLOR_GUIDE.md)
++$link:                                  $ox-sky;
++$link-visited:                          $ox-purple;
+ 
+-$warning:                               if($variant == 'light', $yellow-dark, $yellow-light);
+-$error:                                 if($variant == 'light', $red-dark, $red-light);
+-$success:                               if($variant == 'light', $green-dark, $green-light);
++$warning:                               $ox-orange;
++$error:                                 $ox-red;
++$success:                               $ox-green;
+ 
+-$suggested:                             if($variant == 'light', $blue-dark, $blue-light);
++$suggested:                             $primary;
+ $destructive:                           $error;
+ 
+ $assets-color:                          $primary;
+ 
+ $frame:                                 if($variant == 'light', rgba($black, 0.12), rgba($black, 0.20));
+-$border:                                if($variant == 'light', rgba($black, 0.12), rgba($white, 0.12));
++// oxide: 0.18 lands on surface2 over base/mantle
++$border:                                if($variant == 'light', rgba($black, 0.18), rgba($white, 0.18));
+ $window-border:                         if($variant == 'light', rgba($black, 0.12), rgba($black, 0.75));
+ $solid-border:                          if($variant == 'light', mix(black, $base, 12%), mix(white, $base, 12%));
+ $border-alt:                            rgba($black, 0.16); // darker border color for Chrome and Firefox
+diff --git a/themes/src/sass/gtk/_colors-libadwaita.scss b/themes/src/sass/gtk/_colors-libadwaita.scss
+index 31974461..4c59ca69 100644
+--- a/themes/src/sass/gtk/_colors-libadwaita.scss
++++ b/themes/src/sass/gtk/_colors-libadwaita.scss
+@@ -142,7 +142,7 @@ $dark_5: #000000;
+ @define-color headerbar_shade_color #{$border};
+ 
+ // Cards, boxed lists
+-@define-color card_bg_color #{$base};
++@define-color card_bg_color #{$card};
+ @define-color card_fg_color #{$text};
+ @define-color card_shade_color #{$border};
+ 
+diff --git a/themes/src/sass/gtk/_colors-public.scss b/themes/src/sass/gtk/_colors-public.scss
+index 5f4525e4..35dd70a2 100644
+--- a/themes/src/sass/gtk/_colors-public.scss
++++ b/themes/src/sass/gtk/_colors-public.scss
+@@ -19,10 +19,10 @@
+ @define-color theme_base_color #{"" + $base};
+ 
+ /* base background color of selections */
+-@define-color theme_selected_bg_color #{"" + $primary};
++@define-color theme_selected_bg_color #{"" + $selection};
+ 
+ /* text/foreground color of selections */
+-@define-color theme_selected_fg_color #{"" + on($primary)};
++@define-color theme_selected_fg_color #{"" + $text};
+ 
+ /* base background color of insensitive widgets */
+ @define-color insensitive_bg_color #{"" + $background};
+@@ -46,10 +46,10 @@
+ @define-color theme_unfocused_base_color #{"" + $base};
+ 
+ /* base background color of selections on backdrop windows */
+-@define-color theme_unfocused_selected_bg_color #{"" + $primary};
++@define-color theme_unfocused_selected_bg_color #{"" + $selection};
+ 
+ /* text/foreground color of selections on backdrop windows */
+-@define-color theme_unfocused_selected_fg_color #{"" + on($primary)};
++@define-color theme_unfocused_selected_fg_color #{"" + $text};
+ 
+ /* insensitive color on backdrop windows */
+ @define-color unfocused_insensitive_color #{"" + $text-disabled};
+diff --git a/themes/src/sass/gtk/_common-3.0.scss b/themes/src/sass/gtk/_common-3.0.scss
+index 4148a1b4..2117d848 100644
+--- a/themes/src/sass/gtk/_common-3.0.scss
++++ b/themes/src/sass/gtk/_common-3.0.scss
+@@ -38,8 +38,9 @@
+ }
+ 
+ %selected_items_primary {
+-	color: on($primary);
+-	background-color: $primary;
++	// oxide: active selection = surface1, not the accent
++	color: $text;
++	background-color: $selection;
+ }
+ 
+ %selected_items_indicator {
+@@ -1119,7 +1120,6 @@ dropdown {
+ 
+ 	> button > box {
+ 		border-radius: 0 $modal-radius $modal-radius 0;
+-		border-spacing: $space-size;
+ 
+ 		> stack > row.activatable {
+ 			&:hover,
+@@ -1807,7 +1807,8 @@ treeview.view {
+ 	} // to avoid borders being overridden by the previously set props
+ 
+ 	&:selected {
+-		@extend %selected_items_indicator;
++		// oxide: active selection = surface1
++		@extend %selected_items_primary;
+ 	}
+ 
+ 	&.separator {
+@@ -1853,15 +1854,15 @@ treeview.view {
+ 		}
+ 
+ 		&:selected {
+-			color: on($indicator, secondary);
++			color: $text-secondary;
+ 
+ 			&:hover,
+ 			&:active {
+-				color: on($indicator);
++				color: $text;
+ 			}
+ 
+ 			&:disabled {
+-				color: on($indicator, secondary-disabled);
++				color: $text-secondary-disabled;
+ 			}
+ 		}
+ 	}
+@@ -2665,6 +2666,11 @@ switch {
+ 
+ 	&:checked {
+ 		background-color: $assets-color;
++
++		// oxide: knob contrasts with the monochrome track (base on text)
++		slider {
++			background-color: on($assets-color);
++		}
+ 	}
+ 
+ 	&:disabled {
+diff --git a/themes/src/sass/gtk/_common-4.0.scss b/themes/src/sass/gtk/_common-4.0.scss
+index ca1f5344..bdec3da3 100644
+--- a/themes/src/sass/gtk/_common-4.0.scss
++++ b/themes/src/sass/gtk/_common-4.0.scss
+@@ -3355,6 +3355,11 @@ switch {
+ 
+ 	&:checked {
+ 		background-color: $assets-color;
++
++		// oxide: knob contrasts with the monochrome track (base on text)
++		> slider {
++			background-color: on($assets-color);
++		}
+ 	}
+ 
+ 	&:disabled {
+@@ -5941,8 +5946,9 @@ windowcontrols {
+ }
+ 
+ %selected_items_primary {
+-	color: on($primary);
+-	background-color: $primary;
++	// oxide: active selection = surface1, not the accent
++	color: $text;
++	background-color: $selection;
+ }
+ 
+ // .monospace { font-family: monospace; }

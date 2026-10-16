@@ -1,0 +1,314 @@
+/*
+ * Oxide for Obsidian — dark and light.
+ * Palette: oxide/colors.txt in the dotfiles repo (dark upstream, light derived).
+ * Rules: oxidescheme/oxide UI_COLOR_GUIDE.md. Monochrome chrome; accents only
+ * where they carry meaning (links, tags, callout type, syntax, errors).
+ * Fonts are left to the vault (appearance.json + snippets).
+ */
+
+/* ===========================================================================
+ * Palette
+ * =========================================================================== */
+
+.theme-dark {
+  --oxide-mantle: #121212;
+  --oxide-base: #161616;
+  --oxide-surface0: #222222;
+  --oxide-surface1: #2e2e2e;
+  --oxide-surface2: #3a3a3a;
+
+  --oxide-bright-text: #eeeeee;
+  --oxide-text: #cecece;
+  --oxide-subtext0: #aeaeae;
+  --oxide-subtext1: #808080;
+  --oxide-subtext2: #555555;
+
+  --oxide-red: #ed756e;
+  --oxide-orange: #e48233;
+  --oxide-yellow: #c39900;
+  --oxide-lime: #9ca81f;
+  --oxide-green: #5bb661;
+  --oxide-teal: #00baaa;
+  --oxide-sky: #00b3d6;
+  --oxide-blue: #3ba6f5;
+  --oxide-purple: #968ff7;
+  --oxide-pink: #cc7bd1;
+
+  --oxide-bright-sky: #00d5f9;
+  --oxide-bright-blue: #6fc6ff;
+  --oxide-bright-pink: #dd8be2;
+
+  /* hsl() of --oxide-text, for Obsidian's accent-hsl consumers */
+  --accent-h: 0;
+  --accent-s: 0%;
+  --accent-l: 81%;
+
+  --color-red-rgb: 237, 117, 110;
+  --color-orange-rgb: 228, 130, 51;
+  --color-yellow-rgb: 195, 153, 0;
+  --color-green-rgb: 91, 182, 97;
+  --color-cyan-rgb: 0, 186, 170;
+  --color-blue-rgb: 59, 166, 245;
+  --color-purple-rgb: 150, 143, 247;
+  --color-pink-rgb: 204, 123, 209;
+}
+
+.theme-light {
+  --oxide-mantle: #eeeeee;
+  --oxide-base: #f5f5f5;
+  --oxide-surface0: #e4e4e4;
+  --oxide-surface1: #d4d4d4;
+  --oxide-surface2: #c4c4c4;
+
+  --oxide-bright-text: #1b1b1b;
+  --oxide-text: #333333;
+  --oxide-subtext0: #4d4d4d;
+  --oxide-subtext1: #777777;
+  --oxide-subtext2: #a4a4a4;
+
+  --oxide-red: #af3c3a;
+  --oxide-orange: #a74a00;
+  --oxide-yellow: #8a6200;
+  --oxide-lime: #687100;
+  --oxide-green: #1b7e2a;
+  --oxide-teal: #008274;
+  --oxide-sky: #007b9e;
+  --oxide-blue: #006eb8;
+  --oxide-purple: #6358ba;
+  --oxide-pink: #924598;
+
+  --oxide-bright-sky: #006688;
+  --oxide-bright-blue: #0058a1;
+  --oxide-bright-pink: #7c2f82;
+
+  --accent-h: 0;
+  --accent-s: 0%;
+  --accent-l: 20%;
+
+  --color-red-rgb: 175, 60, 58;
+  --color-orange-rgb: 167, 74, 0;
+  --color-yellow-rgb: 138, 98, 0;
+  --color-green-rgb: 27, 126, 42;
+  --color-cyan-rgb: 0, 130, 116;
+  --color-blue-rgb: 0, 110, 184;
+  --color-purple-rgb: 99, 88, 186;
+  --color-pink-rgb: 146, 69, 152;
+}
+
+/* ===========================================================================
+ * Mapping onto Obsidian variables (shared by both variants)
+ * =========================================================================== */
+
+.theme-dark,
+.theme-light {
+  /* Accent colors */
+  --color-red: var(--oxide-red);
+  --color-orange: var(--oxide-orange);
+  --color-yellow: var(--oxide-yellow);
+  --color-green: var(--oxide-green);
+  --color-cyan: var(--oxide-teal);
+  --color-blue: var(--oxide-blue);
+  --color-purple: var(--oxide-purple);
+  --color-pink: var(--oxide-pink);
+
+  /* Base ramp, ordered like Obsidian's (00 = canvas, 100 = text) */
+  --color-base-00: var(--oxide-base);
+  --color-base-05: var(--oxide-mantle);
+  --color-base-10: var(--oxide-mantle);
+  --color-base-20: var(--oxide-mantle);
+  --color-base-25: var(--oxide-surface0);
+  --color-base-30: var(--oxide-surface1);
+  --color-base-35: var(--oxide-surface2);
+  --color-base-40: var(--oxide-subtext2);
+  --color-base-50: var(--oxide-subtext1);
+  --color-base-60: var(--oxide-subtext0);
+  --color-base-70: var(--oxide-subtext0);
+  --color-base-100: var(--oxide-text);
+
+  /* Accent is monochrome: active state = brighter text, not a hue */
+  --color-accent: var(--oxide-text);
+  --color-accent-1: var(--oxide-bright-text);
+  --color-accent-2: var(--oxide-bright-text);
+
+  /* Backgrounds */
+  --background-primary: var(--oxide-base);
+  --background-primary-alt: var(--oxide-mantle);
+  --background-secondary: var(--oxide-mantle);
+  --background-secondary-alt: var(--oxide-surface0);
+  --background-modifier-hover: var(--oxide-surface0);
+  --background-modifier-border: var(--oxide-surface2);
+  --background-modifier-border-hover: var(--oxide-subtext2);
+  --background-modifier-border-focus: var(--oxide-subtext1);
+  --background-modifier-form-field: var(--oxide-surface0);
+  --background-modifier-form-field-hover: var(--oxide-surface0);
+  --background-modifier-error: var(--oxide-red);
+  --background-modifier-error-hover: var(--oxide-red);
+  --background-modifier-warning: var(--oxide-orange);
+  --background-modifier-warning-hover: var(--oxide-orange);
+  --background-modifier-success: var(--oxide-green);
+  --background-modifier-message: var(--oxide-surface1);
+
+  /* Text */
+  --text-normal: var(--oxide-text);
+  --text-muted: var(--oxide-subtext0);
+  --text-faint: var(--oxide-subtext1);
+  --text-accent: var(--oxide-bright-text);
+  --text-accent-hover: var(--oxide-bright-text);
+  --text-on-accent: var(--oxide-base);
+  --text-on-accent-inverted: var(--oxide-text);
+  --text-error: var(--oxide-red);
+  --text-warning: var(--oxide-orange);
+  --text-success: var(--oxide-green);
+  --text-selection: var(--oxide-surface1);
+  --text-highlight-bg: color-mix(in oklch, var(--oxide-yellow) 30%, transparent);
+  --caret-color: var(--oxide-bright-text);
+
+  /* Interactive: buttons, checkboxes, toggles, sliders */
+  --interactive-normal: var(--oxide-surface1);
+  --interactive-hover: var(--oxide-surface2);
+  --interactive-accent: var(--oxide-text);
+  --interactive-accent-hover: var(--oxide-bright-text);
+  --interactive-accent-hsl: var(--accent-h), var(--accent-s), var(--accent-l);
+  --toggle-thumb-color: var(--oxide-base);
+  --checkbox-color: var(--oxide-text);
+  --checkbox-color-hover: var(--oxide-bright-text);
+  --checkbox-marker-color: var(--oxide-base);
+  --checkbox-border-color: var(--oxide-subtext1);
+  --checkbox-border-color-hover: var(--oxide-subtext0);
+  --checklist-done-color: var(--oxide-subtext1);
+
+  /* Chrome */
+  --divider-color: var(--oxide-surface2);
+  --tab-text-color: var(--oxide-subtext1);
+  --tab-text-color-active: var(--oxide-subtext0);
+  --tab-text-color-focused: var(--oxide-subtext0);
+  --tab-text-color-focused-active: var(--oxide-text);
+  --tab-text-color-focused-active-current: var(--oxide-bright-text);
+  --nav-item-color: var(--oxide-subtext0);
+  --nav-item-color-hover: var(--oxide-text);
+  --nav-item-color-active: var(--oxide-bright-text);
+  --nav-item-color-selected: var(--oxide-bright-text);
+  --nav-item-background-hover: var(--oxide-surface0);
+  --nav-item-background-active: var(--oxide-surface1);
+  --nav-item-background-selected: var(--oxide-surface1);
+  --tooltip-color: var(--oxide-text);
+  --notice-color: var(--oxide-text);
+  --table-selection: var(--oxide-surface1);
+  --table-selection-border-color: var(--oxide-subtext1);
+
+  /* Headings: bright_text, hierarchy from size/weight (UI guide: headings) */
+  --h1-color: var(--oxide-bright-text);
+  --h2-color: var(--oxide-bright-text);
+  --h3-color: var(--oxide-bright-text);
+  --h4-color: var(--oxide-bright-text);
+  --h5-color: var(--oxide-bright-text);
+  --h6-color: var(--oxide-bright-text);
+  --heading-formatting: var(--oxide-subtext2);
+  --bold-color: var(--oxide-bright-text);
+
+  /* Links: internal blue, external sky (nvim: link label blue, URL sky) */
+  --link-color: var(--oxide-blue);
+  --link-color-hover: var(--oxide-bright-blue);
+  --link-external-color: var(--oxide-sky);
+  --link-external-color-hover: var(--oxide-bright-sky);
+  --link-unresolved-color: var(--oxide-blue);
+  --link-unresolved-decoration-color: color-mix(in oklch, var(--oxide-blue) 30%, transparent);
+
+  /* Tags: pink (nvim @tag) */
+  --tag-color: var(--oxide-pink);
+  --tag-color-hover: var(--oxide-bright-pink);
+  --tag-background: color-mix(in oklch, var(--oxide-pink) 12%, transparent);
+  --tag-background-hover: color-mix(in oklch, var(--oxide-pink) 20%, transparent);
+  --tag-border-color: color-mix(in oklch, var(--oxide-pink) 15%, transparent);
+  --tag-border-color-hover: color-mix(in oklch, var(--oxide-pink) 25%, transparent);
+
+  /* Quotes, embeds, lists */
+  --blockquote-border-color: var(--oxide-subtext2);
+  --blockquote-color: var(--oxide-subtext0);
+  --embed-border-start: 2px solid var(--oxide-surface2);
+  --list-marker-color: var(--oxide-subtext1);
+  --list-marker-color-hover: var(--oxide-subtext0);
+  --list-marker-color-collapsed: var(--oxide-bright-text);
+  --hr-color: var(--oxide-surface2);
+
+  /* Code (nvim syntax roles) */
+  --code-background: var(--oxide-surface0);
+  --code-normal: var(--oxide-text);
+  --code-comment: var(--oxide-subtext1);
+  --code-function: var(--oxide-teal);
+  --code-important: var(--oxide-orange);
+  --code-keyword: var(--oxide-purple);
+  --code-operator: var(--oxide-text);
+  --code-property: var(--oxide-blue);
+  --code-punctuation: var(--oxide-subtext0);
+  --code-string: var(--oxide-green);
+  --code-tag: var(--oxide-pink);
+  --code-value: var(--oxide-orange);
+
+  /* Callouts by semantic type */
+  --callout-default: var(--oxide-blue);
+  --callout-info: var(--oxide-blue);
+  --callout-todo: var(--oxide-blue);
+  --callout-summary: var(--oxide-teal);
+  --callout-important: var(--oxide-sky);
+  --callout-tip: var(--oxide-green);
+  --callout-success: var(--oxide-green);
+  --callout-question: var(--oxide-yellow);
+  --callout-warning: var(--oxide-orange);
+  --callout-fail: var(--oxide-red);
+  --callout-error: var(--oxide-red);
+  --callout-bug: var(--oxide-red);
+  --callout-example: var(--oxide-purple);
+  --callout-quote: var(--oxide-subtext1);
+
+  /* Graph */
+  --graph-text: var(--oxide-text);
+  --graph-line: var(--oxide-surface2);
+  --graph-node: var(--oxide-subtext0);
+  --graph-node-unresolved: var(--oxide-subtext2);
+  --graph-node-focused: var(--oxide-bright-text);
+  --graph-node-tag: var(--oxide-pink);
+  --graph-node-attachment: var(--oxide-yellow);
+
+  /* Canvas */
+  --canvas-dot-pattern: var(--oxide-surface2);
+}
+
+/* ===========================================================================
+ * Syntax roles Obsidian's --code-* variables do not separate
+ * (Obsidian groups types with functions and constants with tags)
+ * =========================================================================== */
+
+.token.class-name,
+.token.builtin,
+.cm-type {
+  color: var(--oxide-sky);
+}
+
+.token.constant,
+.token.symbol {
+  color: var(--oxide-orange);
+}
+
+.token.regex,
+.token.attr-name {
+  color: var(--oxide-teal);
+}
+
+.cm-property {
+  color: var(--oxide-blue);
+}
+
+.token.deleted {
+  color: var(--oxide-red);
+}
+
+.token.inserted {
+  color: var(--oxide-green);
+}
+
+/* Inline code: orange on surface0 (nvim @markup.raw / RenderMarkdownCodeInline) */
+.markdown-rendered :not(pre) > code,
+.cm-s-obsidian span.cm-inline-code:not(.cm-formatting) {
+  color: var(--oxide-orange);
+}

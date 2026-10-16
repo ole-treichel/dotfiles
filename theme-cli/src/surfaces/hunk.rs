@@ -9,8 +9,8 @@ use crate::surfaces::{Mode, SurfaceReport};
 pub fn apply(mode: Mode, _cfg: &Config) -> SurfaceReport {
     let name = "hunk";
     let theme = match mode {
-        Mode::Light => "everforest-light",
-        Mode::Dark => "everforest-dark",
+        Mode::Light => "oxide-light",
+        Mode::Dark => "oxide-dark",
     };
     match rewrite_theme(theme) {
         Ok(path) => SurfaceReport::ok(name, format!("theme={theme} ({})", path.display())),

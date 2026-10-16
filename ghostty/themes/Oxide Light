@@ -1,0 +1,30 @@
+# Oxide Light for Ghostty
+# Derived light palette, see oxide/colors.txt. Same role mapping as Oxide Dark.
+
+# Core UI colors
+background = #f5f5f5
+foreground = #333333
+cursor-color = #333333
+cursor-text = #f5f5f5
+selection-background = #d4d4d4
+selection-foreground = #333333
+
+# Standard ANSI colors (0-15)
+palette = 0=#e4e4e4
+palette = 1=#af3c3a
+palette = 2=#1b7e2a
+palette = 3=#8a6200
+palette = 4=#006eb8
+palette = 5=#6358ba
+palette = 6=#008274
+palette = 7=#333333
+
+# Bright colors (8-15)
+palette = 8=#777777
+palette = 9=#972527
+palette = 10=#006911
+palette = 11=#754d00
+palette = 12=#0058a1
+palette = 13=#5043a3
+palette = 14=#006d60
+palette = 15=#1b1b1b

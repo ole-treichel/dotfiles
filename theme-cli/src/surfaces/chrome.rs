@@ -23,8 +23,8 @@ pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
         }
 
         let ext_dir = cfg.repo_path.join("chrome").join(match mode {
-            Mode::Light => "everforest-light",
-            Mode::Dark => "everforest-dark",
+            Mode::Light => "oxide-light",
+            Mode::Dark => "oxide-dark",
         });
         if !ext_dir.exists() {
             return Err(anyhow!("extension dir not found: {}", ext_dir.display()));
@@ -134,8 +134,8 @@ pub fn apply(mode: Mode, cfg: &Config) -> SurfaceReport {
         }
 
         let ext_dir = cfg.repo_path.join("chrome").join(match mode {
-            Mode::Light => "everforest-light",
-            Mode::Dark => "everforest-dark",
+            Mode::Light => "oxide-light",
+            Mode::Dark => "oxide-dark",
         });
         if !ext_dir.exists() {
             return Err(anyhow!("extension dir not found: {}", ext_dir.display()));

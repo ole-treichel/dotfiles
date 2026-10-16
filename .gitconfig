@@ -23,7 +23,32 @@
 	helper =
 	helper = !/usr/bin/gh auth git-credential
 [delta]
+	features = oxide-dark
 	dark = true
+# Oxide palette: oxide/colors.txt. Syntax themes: bat/themes (bat cache --build).
+# theme-cli switches delta.features between these two.
+[delta "oxide-dark"]
+	syntax-theme = Oxide Dark
+	minus-style = syntax "#452b28"
+	minus-emph-style = syntax "#6c3531"
+	plus-style = syntax "#263826"
+	plus-emph-style = syntax "#29532b"
+	line-numbers-minus-style = "#ed756e"
+	line-numbers-plus-style = "#5bb661"
+	line-numbers-zero-style = "#555555"
+	line-numbers-left-style = "#3a3a3a"
+	line-numbers-right-style = "#3a3a3a"
+[delta "oxide-light"]
+	syntax-theme = Oxide Light
+	minus-style = syntax "#f8d4d1"
+	minus-emph-style = syntax "#f7b4ad"
+	plus-style = syntax "#cee6ce"
+	plus-emph-style = syntax "#a7d6a8"
+	line-numbers-minus-style = "#af3c3a"
+	line-numbers-plus-style = "#1b7e2a"
+	line-numbers-zero-style = "#a4a4a4"
+	line-numbers-left-style = "#c4c4c4"
+	line-numbers-right-style = "#c4c4c4"
 [diff]
 	tool = hunk
 [difftool "hunk"]
