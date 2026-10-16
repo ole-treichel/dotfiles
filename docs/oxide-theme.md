@@ -136,7 +136,26 @@ symlink.
 
 Non-goals (unchanged from [theme-firefox.md](theme-firefox.md)): web-ext,
 AMO signing, `userChrome.css`. This route depends on Fedora's build flags; a
-Mozilla-built Firefox (tarball, Mozilla flatpak, macOS) would not load it.
+Mozilla-built Firefox (tarball, Mozilla flatpak) would not load it.
+
+macOS (Firefox Developer Edition): Mozilla builds require signing in every
+scope; Developer Edition / Nightly honor `xpinstall.signatures.required=false`.
+`install_theme.sh` on Darwin zips the manifest into
+`<profile>/extensions/oxide@theme-cli.xpi` for each install's default
+profile, sets that pref in `prefs.js`, and deletes `addonStartup.json.lz4` so
+the profile scope is rescanned. Trade-off accepted: the pref applies to all
+add-ons in the profile. Sideloaded add-ons start disabled; enable once in
+about:addons → Themes. Rerun after editing the manifest. Stable Firefox on
+macOS cannot load it.
+
+## macOS Ghostty
+
+Ghostty on macOS reads `~/Library/Application Support/com.mitchellh.ghostty/config`
+(not `~/.config/ghostty.config`). That file is a symlink to
+`.config/ghostty.config`; `~/.config/ghostty/themes/Oxide {Dark,Light}` are
+symlinks to `ghostty/themes/`. The macOS theme-cli config
+(`~/Library/Application Support/theme-cli/config.toml`) names the Oxide
+themes under `[ghostty]`.
 
 ## Thunderbird
 
