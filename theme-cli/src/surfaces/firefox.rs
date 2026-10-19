@@ -38,8 +38,9 @@ pub fn apply(_mode: Mode, cfg: &Config) -> SurfaceReport {
     }
 }
 
-// Mozilla's macOS builds require signing in every scope.
+// macOS: Developer Edition with signatures off loads the theme as a profile
+// XPI (firefox/install_theme.sh). Same dark_theme mechanism, nothing to push.
 #[cfg(target_os = "macos")]
 pub fn apply(_mode: Mode, _cfg: &Config) -> SurfaceReport {
-    SurfaceReport::ok("firefox", "not supported on macOS")
+    SurfaceReport::ok("firefox", "follows system color-scheme (dark_theme)")
 }
