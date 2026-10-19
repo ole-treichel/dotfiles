@@ -24,7 +24,7 @@ Edit `config.toml` (or copy to `~/.config/theme-cli/config.toml` for a user-loca
 
 The GNOME Terminal profile is created automatically on first run — no manual setup.
 
-Firefox: run `../firefox/install_theme.sh` once. The theme holds both palettes (`dark_theme`) and follows the system color-scheme, so the Firefox surface only reports whether it is installed. See [docs/oxide-theme.md](../docs/oxide-theme.md).
+Firefox: run `../firefox/install_addons.sh` once. The theme holds both palettes (`dark_theme`) and follows the system color-scheme, so the Firefox surface only reports whether it is installed. See [docs/oxide-theme.md](../docs/oxide-theme.md).
 
 ## Use
 

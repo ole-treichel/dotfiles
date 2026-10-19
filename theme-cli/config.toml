@@ -22,7 +22,7 @@ flatpak_app_id = "io.github.ungoogled_software.ungoogled_chromium"
 # app_name = "Chromium"
 
 # Firefox needs no config: one theme with light + dark_theme, installed once by
-# firefox/install_theme.sh. See docs/oxide-theme.md.
+# firefox/install_addons.sh. See docs/oxide-theme.md.
 
 [ghostty]
 # Theme names as shown by `ghostty +list-themes`.
