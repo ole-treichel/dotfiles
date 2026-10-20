@@ -7,7 +7,7 @@ use crate::surfaces::{Mode, SurfaceReport};
 // This surface only reports whether the theme is installed.
 //
 // Install path: Fedora's Firefox loads unsigned add-ons from the system
-// extension scope (MOZ_UNSIGNED_SYSTEM_SCOPE), so firefox/install_theme.sh
+// extension scope (MOZ_UNSIGNED_SYSTEM_SCOPE), so firefox/install_addons.sh
 // symlinks the theme there once. No web-ext, no AMO signing, no relaunch.
 // See docs/oxide-theme.md and docs/theme-firefox.md.
 
@@ -33,13 +33,13 @@ pub fn apply(_mode: Mode, cfg: &Config) -> SurfaceReport {
         ),
         Err(_) => SurfaceReport::err(
             name,
-            anyhow::anyhow!("theme not installed: run firefox/install_theme.sh"),
+            anyhow::anyhow!("theme not installed: run firefox/install_addons.sh"),
         ),
     }
 }
 
 // macOS: Developer Edition with signatures off loads the theme as a profile
-// XPI (firefox/install_theme.sh). Same dark_theme mechanism, nothing to push.
+// XPI (firefox/install_addons.sh). Same dark_theme mechanism, nothing to push.
 #[cfg(target_os = "macos")]
 pub fn apply(_mode: Mode, _cfg: &Config) -> SurfaceReport {
     SurfaceReport::ok("firefox", "follows system color-scheme (dark_theme)")

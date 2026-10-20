@@ -125,12 +125,13 @@ Facts checked on Fedora's `firefox-157.0.1-1.fc44` (`omni.ja`):
   system prefers dark. One theme covers both modes, so `theme` has nothing to
   push and Firefox is never relaunched.
 - `extensions.startupScanScopes = 0` → the system scope is only scanned when
-  the Firefox build ID changes. `install_theme.sh` sets it to 8
+  the Firefox build ID changes. `install_addons.sh` sets it to 8
   (`SCOPE_SYSTEM`) in each install's default profile so the theme is found on
   the next start and manifest edits apply after a restart.
 
-Install once: close Firefox, run `firefox/install_theme.sh` (sudo for the
-symlink), start Firefox; if Oxide is not active, enable it in
+Install once: close Firefox, run `firefox/install_addons.sh` (sudo for the
+symlinks; also installs the new tab page, see
+[firefox-newtab.md](firefox-newtab.md)), start Firefox; if Oxide is not active, enable it in
 about:addons → Themes. The `theme` Firefox surface now only checks the
 symlink.
 
@@ -140,8 +141,8 @@ Mozilla-built Firefox (tarball, Mozilla flatpak) would not load it.
 
 macOS (Firefox Developer Edition): Mozilla builds require signing in every
 scope; Developer Edition / Nightly honor `xpinstall.signatures.required=false`.
-`install_theme.sh` on Darwin zips the manifest into
-`<profile>/extensions/oxide@theme-cli.xpi` for each install's default
+`install_addons.sh` on Darwin zips each add-on into
+`<profile>/extensions/<add-on id>.xpi` for each install's default
 profile, sets that pref in `prefs.js`, and deletes `addonStartup.json.lz4` so
 the profile scope is rescanned. Trade-off accepted: the pref applies to all
 add-ons in the profile. Sideloaded add-ons start disabled; enable once in

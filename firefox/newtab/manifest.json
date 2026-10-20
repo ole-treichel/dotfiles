@@ -1,0 +1,14 @@
+{
+    "manifest_version": 2,
+    "name": "New Tab Page",
+    "version": "1.0.0",
+    "description": "Blank new tab page in the Oxide base color. Follows the light/dark color-scheme. See docs/firefox-newtab.md in the dotfiles repo.",
+    "browser_specific_settings": {
+        "gecko": {
+            "id": "newtab@dotfiles"
+        }
+    },
+    "chrome_url_overrides": {
+        "newtab": "index.html"
+    }
+}
