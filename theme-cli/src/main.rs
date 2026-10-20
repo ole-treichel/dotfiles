@@ -70,6 +70,7 @@ fn main() -> ExitCode {
         surfaces::ghostty::apply(target, &cfg),
         surfaces::hunk::apply(target, &cfg),
         surfaces::delta::apply(target, &cfg),
+        surfaces::btop::apply(target, &cfg),
     ];
 
     #[cfg(target_os = "linux")]

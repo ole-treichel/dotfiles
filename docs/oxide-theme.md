@@ -60,6 +60,7 @@ blue). No blue "brand" accent on focus rings, tabs, toggles, or headers.
 | Thunderbird (flatpak) | `thunderbird/install_theme.sh` | same manifest as Firefox, see [Thunderbird](#thunderbird) |
 | hunk | `hunk/config.toml` | `[themes.oxide-dark]` / `[themes.oxide-light]`; `~/.config/hunk/config.toml` symlinks here. Untokenized text (plain files, first frame) comes from the base theme's foreground, not a config key: bases `dark-plus` / `vitesse-light` give `#d4d4d4` / `#393a34`, closest bundled match to oxide text |
 | delta | `bat/themes/*.tmTheme`, `.gitconfig` `[delta "oxide-*"]` | syntax via bat cache; `theme` sets `delta.features` |
+| btop | `btop/oxide-{dark,light}.theme` | symlinked into `~/.config/btop/themes/`; boxes/dividers surface2, selection surface1, shortcut keys + followed process blue; cpu/temp/mem/process gradients green → yellow → red, cached sky → blue, download blue, upload purple. `theme` rewrites `color_theme` in `~/.config/btop/btop.conf` (live file, not in repo) and sends SIGUSR2: btop reloads the config, otherwise `save_config_on_exit` would write the old theme back |
 | GNOME Terminal (module unused) | `gnome-terminal/oxide-{dark,light}.dconf` | kept in sync for completeness |
 | Obsidian | `obsidian/oxide/`, `obsidian/install_theme.sh` | see [Obsidian](#obsidian) |
 

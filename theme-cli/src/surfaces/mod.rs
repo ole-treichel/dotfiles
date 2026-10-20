@@ -1,5 +1,6 @@
 #[cfg(target_os = "linux")]
 pub mod apps;
+pub mod btop;
 pub mod chrome;
 pub mod delta;
 pub mod firefox;

@@ -1,6 +1,6 @@
 # theme-cli
 
-Single command to switch system-wide light/dark mode across GNOME (GTK + Shell), Neovim, tmux, Ghostty, Chrome, Hunk (git pager/difftool), and delta (git's `interactive.diffFilter`). All surfaces use the Oxide scheme: upstream dark, derived light (`../oxide/colors.txt`, `../docs/oxide-theme.md`).
+Single command to switch system-wide light/dark mode across GNOME (GTK + Shell), Neovim, tmux, Ghostty, Chrome, Hunk (git pager/difftool), delta (git's `interactive.diffFilter`), and btop. All surfaces use the Oxide scheme: upstream dark, derived light (`../oxide/colors.txt`, `../docs/oxide-theme.md`).
 
 `gsettings get org.gnome.desktop.interface color-scheme` is the source of truth. `theme light` / `theme dark` set it and push matching changes to the surfaces that don't auto-follow.
 
